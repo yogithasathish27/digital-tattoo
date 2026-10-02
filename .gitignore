@@ -22,3 +22,4 @@ gps_test.jpg
 test.jpg
 metadata_test.py
 static/images/*
+!static/images/digital-tattoo-logo.jpeg

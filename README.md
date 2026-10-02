@@ -1,4 +1,8 @@
-# Digital Tattoo 🔐
+<p align="center">
+  <img src="static/images/digital-tattoo-logo.jpeg" width="150" alt="Digital Tattoo Logo">
+</p>
+
+<h1 align="center">Digital Tattoo</h1>
 
 Digital Tattoo is a cybersecurity project I built to explore how information we can unknowingly share while using the internet.
 
@@ -130,6 +134,6 @@ I'll continue updating the project as I learn more.
 
 ## 👩‍💻 About Me
 
-I'm Yogitha Sathish, a B.E. Computer Science and Engineering (Cyber Security) student, in cybersecurity, ethical hacking and security engineering.
+I'm Yogitha Sathish, a B.E. Computer Science and Engineering (Cyber Security) student, I'm currently exploring different areas of cybersecurity, with a particular interest in Ethical Hacking and Security Engineering.
 
 This is one of the projects I'm building as part of my cybersecurity learning journey.
