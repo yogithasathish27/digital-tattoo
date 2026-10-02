@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Tattoo | Scan Results</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --copper: #f0a35e;
+            --copper-dark: #c87544;
+            --copper-light: #ffc184;
+            --copper-soft: rgba(240, 163, 94, 0.10);
+            --copper-border: rgba(240, 163, 94, 0.24);
+            --copper-glow: rgba(240, 163, 94, 0.20);
+
+            --page-bg: #0b1117;
+            --nav-bg: #0b1016;
+            --card-bg: rgba(22, 29, 36, 0.92);
+            --card-bg-2: rgba(27, 35, 43, 0.94);
+
+            --text-main: #f4f5f6;
+            --text-muted: #aeb7bf;
+
+            --safe: #69eeb0;
+            --danger: #ff9b8d;
+            --warning: #ffc36b;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(240, 163, 94, 0.09),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 85% 30%,
+                    rgba(200, 117, 68, 0.06),
+                    transparent 30%
+                ),
+                var(--page-bg);
+
+            color: var(--text-main);
+        }
+
+
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        .navbar {
+            background: rgba(10, 15, 20, 0.97);
+
+            border-bottom:
+                1px solid rgba(240, 163, 94, 0.16);
+
+            padding: 17px 7%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .brand img {
+            width: 52px;
+            height: 52px;
+
+            object-fit: cover;
+            object-position: center;
+
+            border-radius: 10px;
+            display: block;
+
+            filter:
+                drop-shadow(
+                    0 0 8px rgba(240, 163, 94, 0.30)
+                );
+        }
+
+        .brand span {
+            color: #ffffff;
+        }
+
+        .brand .tattoo {
+            color: var(--copper);
+        }
+
+        .scanner-status {
+            color: #a7b0b7;
+            font-size: 13px;
+        }
+
+        .scanner-status strong {
+            color: #5ef0aa;
+        }
+
+
+        /* =========================================
+           MAIN PAGE
+        ========================================= */
+
+        .page {
+            width: min(1100px, 92%);
+            margin: 45px auto 70px;
+        }
+
+        .page-heading {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+
+            padding: 8px 15px;
+
+            border: 1px solid var(--copper);
+            border-radius: 999px;
+
+            color: var(--copper-light);
+            background: rgba(240, 163, 94, 0.08);
+
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+
+            margin-bottom: 15px;
+        }
+
+        .page-heading h1 {
+            font-size: 38px;
+            margin-bottom: 9px;
+        }
+
+        .page-heading p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 900px;
+        }
+
+
+        /* =========================================
+           PRIVACY SCORE
+        ========================================= */
+
+        .score-card {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(38, 34, 31, 0.96),
+                    rgba(19, 25, 31, 0.97)
+                );
+
+            border:
+                1px solid var(--copper-border);
+
+            border-radius: 22px;
+
+            padding: 30px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 18px 50px rgba(0, 0, 0, 0.22);
+        }
+
+        .score-grid {
+            display: grid;
+
+            grid-template-columns:
+                210px 1fr;
+
+            gap: 30px;
+
+            align-items: center;
+        }
+
+        .score-circle {
+            width: 185px;
+            height: 185px;
+
+            border-radius: 50%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            background: #11171d;
+
+            border:
+                7px solid var(--copper);
+
+            box-shadow:
+                0 0 30px var(--copper-glow),
+                inset 0 0 25px rgba(240, 163, 94, 0.05);
+
+            padding: 20px;
+        }
+.score-circle.high-risk {
+    border-color: #ff5f57;
+    box-shadow:
+        0 0 30px rgba(255, 95, 87, 0.45),
+        inset 0 0 25px rgba(255, 95, 87, 0.06);
+}
+
+.score-circle.medium-risk {
+    border-color: #f0a35e;
+    box-shadow:
+        0 0 30px rgba(240, 163, 94, 0.45),
+        inset 0 0 25px rgba(240, 163, 94, 0.06);
+}
+
+.score-circle.low-risk {
+    border-color: #57d68d;
+    box-shadow:
+        0 0 30px rgba(87, 214, 141, 0.40),
+        inset 0 0 25px rgba(87, 214, 141, 0.06);
+}
+        .score-number {
+            font-size: 46px;
+            font-weight: 900;
+            line-height: 1;
+
+            margin-bottom: 10px;
+        }
+
+        .score-out-of {
+            color: #a2a9af;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            white-space: nowrap;
+
+            letter-spacing: 0.4px;
+        }
+
+        .score-content h2 {
+            font-size: 18px;
+            color: #c0c4c7;
+
+            margin-bottom: 10px;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 9px 15px;
+
+            border-radius: 999px;
+
+            font-weight: 800;
+
+            margin-bottom: 14px;
+        }
+
+
+        /* Keep semantic risk colours */
+
+        .high {
+            color: #ff8d8d;
+
+            background:
+                rgba(255, 73, 73, 0.12);
+
+            border:
+                1px solid rgba(255, 83, 83, 0.35);
+        }
+
+        .medium {
+            color: #ffc36b;
+
+            background:
+                rgba(255, 166, 49, 0.12);
+
+            border:
+                1px solid rgba(255, 166, 49, 0.35);
+        }
+
+        .low {
+            color: #68efad;
+
+            background:
+                rgba(52, 222, 139, 0.11);
+
+            border:
+                1px solid rgba(52, 222, 139, 0.35);
+        }
+
+        .score-message {
+            color: #c7cdd1;
+
+            line-height: 1.7;
+
+            max-width: 650px;
+        }
+
+
+        /* =========================================
+           METADATA
+        ========================================= */
+
+        .section-title {
+            margin: 35px 0 16px;
+
+            font-size: 22px;
+        }
+
+        .metadata-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+        .metadata-card {
+            background:
+                rgba(22, 29, 36, 0.92);
+
+            border:
+                1px solid rgba(240, 163, 94, 0.17);
+
+            border-radius: 18px;
+
+            padding: 22px;
+
+            min-height: 220px;
+
+            transition: 0.25s ease;
+        }
+
+        .metadata-card:hover {
+            transform: translateY(-3px);
+
+            border-color:
+                rgba(240, 163, 94, 0.48);
+
+            box-shadow:
+                0 10px 28px rgba(0, 0, 0, 0.16);
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(240, 163, 94, 0.11);
+
+            border:
+                1px solid rgba(240, 163, 94, 0.13);
+
+            margin-bottom: 15px;
+
+            font-size: 21px;
+        }
+
+        .metadata-card h3 {
+            font-size: 18px;
+
+            margin-bottom: 15px;
+        }
+
+        .metadata-card p {
+            color: #b8bec3;
+
+            line-height: 1.6;
+
+            margin: 8px 0;
+
+            overflow-wrap: anywhere;
+        }
+
+        .detected {
+            color: var(--danger) !important;
+
+            font-weight: 700;
+        }
+
+        .safe {
+            color: var(--safe) !important;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           GPS
+        ========================================= */
+
+        .gps-warning {
+            margin-top: 12px;
+
+            padding: 11px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(240, 163, 94, 0.08);
+
+            border:
+                1px solid rgba(240, 163, 94, 0.18);
+
+            font-size: 13px;
+
+            color: #cbd0d4;
+        }
+
+        .gps-button {
+            margin-top: 13px;
+
+            width: 100%;
+
+            border:
+                1px solid rgba(240, 163, 94, 0.42);
+
+            background:
+                rgba(240, 163, 94, 0.10);
+
+            color: var(--copper-light);
+
+            padding: 11px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+        .gps-button:hover {
+            background:
+                rgba(240, 163, 94, 0.18);
+
+            border-color:
+                rgba(240, 163, 94, 0.70);
+        }
+
+        #gpsCoordinates {
+            margin-top: 13px;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(0, 0, 0, 0.20);
+
+            border:
+                1px solid rgba(240, 163, 94, 0.12);
+        }
+
+
+        /* =========================================
+           WHY THIS SCORE
+        ========================================= */
+
+        .breakdown {
+            background:
+                rgba(22, 29, 36, 0.92);
+
+            border:
+                1px solid rgba(240, 163, 94, 0.17);
+
+            border-radius: 18px;
+
+            padding: 25px 28px;
+
+            margin-top: 25px;
+        }
+
+        .breakdown h2 {
+            margin-bottom: 14px;
+
+            font-size: 23px;
+        }
+
+        .score-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            min-height: 58px;
+
+            padding: 12px 4px;
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            gap: 30px;
+        }
+
+        .score-row:last-child {
+            border-bottom: none;
+        }
+
+        .score-label {
+            flex: 1;
+
+            color: #f0f2f3;
+
+            font-size: 15px;
+
+            font-weight: 600;
+        }
+
+        .score-result {
+            min-width: 220px;
+
+            text-align: right;
+
+            font-size: 15px;
+
+            font-weight: 800;
+        }
+
+        .detected-score {
+            color: var(--danger);
+        }
+
+        .safe-score {
+            color: var(--safe);
+        }
+
+
+        /* =========================================
+           ACTION SECTION
+        ========================================= */
+
+        .action-card {
+            margin-top: 25px;
+
+            padding: 27px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(200, 117, 68, 0.12),
+                    rgba(22, 29, 36, 0.92)
+                );
+
+            border:
+                1px solid rgba(240, 163, 94, 0.22);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 25px;
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-text h2 {
+            margin-bottom: 8px;
+        }
+
+        .action-text p {
+            color: #b4bbc0;
+
+            line-height: 1.6;
+        }
+
+        .clean-action-btn {
+            border: none;
+
+            min-width: 235px;
+
+            padding: 16px 22px;
+
+            border-radius: 12px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+            letter-spacing: 0.5px;
+
+            color: #21140c;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #d9874d,
+                    #f0a35e
+                );
+
+            box-shadow:
+                0 10px 28px
+                rgba(240, 163, 94, 0.20);
+
+            transition: 0.2s;
+        }
+
+        .clean-action-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 13px 32px
+                rgba(240, 163, 94, 0.28);
+        }
+
+        .scan-again {
+            display: inline-block;
+
+            margin-top: 25px;
+
+            color: var(--copper-light);
+
+            text-decoration: none;
+
+            font-weight: 700;
+        }
+
+        .scan-again:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-circle {
+                margin: auto;
+            }
+
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-card {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+            .clean-action-btn {
+                width: 100%;
+            }
+
+            .scanner-status {
+                display: none;
+            }
+
+            .score-row {
+                align-items: flex-start;
+
+                gap: 10px;
+            }
+
+            .score-result {
+                min-width: 155px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <img
+                src="{{ url_for('static', filename='images/digital-tattoo-logo.jpeg') }}"
+                alt="Digital Tattoo Logo"
+            >
+
+            <span>
+                Digital <span class="tattoo">Tattoo</span>
+            </span>
+
+        </div>
+
+
+        <div class="scanner-status">
+            <strong>●</strong> Privacy Scanner Active
+        </div>
+
+    </nav>
+
+
+
+    <main class="page">
+
+
+        <!-- =========================================
+             PAGE HEADING
+        ========================================== -->
+
+        <section class="page-heading">
+
+            <div class="eyebrow">
+                SCAN COMPLETE
+            </div>
+
+            <h1>🔍 Photo Privacy Report</h1>
+
+            <p>
+                We inspected the photo's metadata for information
+                that could expose details about your photo,
+                including EXIF, XMP, and IPTC metadata.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================================
+             PRIVACY SCORE
+        ========================================== -->
+
+        <section class="score-card">
+
+            <div class="score-grid">
+
+                <div class="score-circle
+    {% if privacy_score <= 40 %}high-risk
+    {% elif privacy_score <= 70 %}medium-risk
+    {% else %}low-risk
+    {% endif %}">
+
+                    <div class="score-number">
+                        {{ privacy_score }}
+                    </div>
+
+                    <div class="score-out-of">
+                        PRIVACY SCORE / 100
+                    </div>
+
+                </div>
+
+
+                <div class="score-content">
+
+                    <h2>Privacy Analysis</h2>
+
+
+                    {% if privacy_score <= 40 %}
+
+                        <div class="risk-badge high">
+                            🔴 HIGH RISK
+                        </div>
+
+                        <p class="score-message">
+                            Sensitive metadata is exposed.
+                            Sharing this photo may reveal private
+                            information such as its location,
+                            device details, capture time,
+                            XMP information or IPTC metadata.
+                        </p>
+
+
+                    {% elif privacy_score <= 70 %}
+
+                        <div class="risk-badge medium">
+                            🟠 MEDIUM RISK
+                        </div>
+
+                        <p class="score-message">
+                            Some sensitive metadata was detected.
+                            Consider removing it before sharing
+                            this photo publicly.
+                        </p>
+
+
+                    {% else %}
+
+                        <div class="risk-badge low">
+                            🟢 LOW RISK
+                        </div>
+
+
+                        {% if privacy_score == 100 %}
+
+                            <p class="score-message">
+                                No sensitive metadata was detected
+                                in the fields checked by Digital Tattoo.
+                            </p>
+
+                        {% else %}
+
+                            <p class="score-message">
+                                Very little sensitive metadata was
+                                detected in this photo.
+                            </p>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             METADATA INSPECTION
+        ========================================== -->
+
+        <h2 class="section-title">
+            Metadata Inspection
+        </h2>
+
+
+        <section class="metadata-grid">
+
+
+            <!-- DEVICE INFORMATION -->
+
+            <div class="metadata-card">
+
+                <div class="card-icon">
+                    📱
+                </div>
+
+                <h3>Device Information</h3>
+
+
+                {% if brand != "Not found" %}
+
+                    <p class="detected">
+                        ⚠ Brand information detected
+                    </p>
+
+                    <p>
+                        <strong>Brand:</strong>
+                        {{ brand }}
+                    </p>
+
+                {% else %}
+
+                    <p class="safe">
+                        ✓ Brand information not detected
+                    </p>
+
+                {% endif %}
+
+
+                {% if model != "Not found" %}
+
+                    <p class="detected">
+                        ⚠ Model information detected
+                    </p>
+
+                    <p>
+                        <strong>Model:</strong>
+                        {{ model }}
+                    </p>
+
+                {% else %}
+
+                    <p class="safe">
+                        ✓ Model information not detected
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- PHOTO TIMESTAMP -->
+
+            <div class="metadata-card">
+
+                <div class="card-icon">
+                    🕐
+                </div>
+
+                <h3>Photo Timestamp</h3>
+
+
+                {% if date_time != "Not found" %}
+
+                    <p class="detected">
+                        ⚠ Capture time detected
+                    </p>
+
+                    <p>
+                        {{ date_time }}
+                    </p>
+
+                    <p>
+                        This may reveal when the photo was taken.
+                    </p>
+
+                {% else %}
+
+                    <p class="safe">
+                        ✓ Photo timestamp not detected
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- GPS LOCATION -->
+
+            <div class="metadata-card">
+
+                <div class="card-icon">
+                    📍
+                </div>
+
+                <h3>Location Metadata</h3>
+
+
+                {% if gps_found %}
+
+                    <p class="detected">
+                        ⚠ GPS LOCATION DETECTED
+                    </p>
+
+                    <p>
+                        Precise coordinates exist in this photo.
+                    </p>
+
+                    <div class="gps-warning">
+                        🔒 Coordinates are hidden by default
+                        to protect privacy.
+                    </div>
+
+
+                    <button
+                        class="gps-button"
+                        id="gpsButton"
+                        type="button"
+                        onclick="toggleGPS()"
+                    >
+                        👁 Reveal GPS Coordinates
+                    </button>
+
+
+                    <div
+                        id="gpsCoordinates"
+                        style="display: none;"
+                    >
+
+                        <p>
+                            <strong>Latitude:</strong>
+                            {{ latitude }}
+                        </p>
+
+                        <p>
+                            <strong>Longitude:</strong>
+                            {{ longitude }}
+                        </p>
+
+                        <p class="detected">
+                            ⚠ Precise coordinates can reveal
+                            where this photo was taken.
+                        </p>
+
+                    </div>
+
+
+                {% else %}
+
+                    <p class="safe">
+                        ✓ No GPS coordinates detected
+                    </p>
+
+                    <p>
+                        Precise location information was not
+                        found in the checked EXIF data.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- XMP METADATA -->
+
+            <div class="metadata-card">
+
+                <div class="card-icon">
+                    🧬
+                </div>
+
+                <h3>XMP Metadata</h3>
+
+
+                {% if xmp_found %}
+
+                    <p class="detected">
+                        ⚠ XMP METADATA DETECTED
+                    </p>
+
+                    <p>
+                        Extended metadata is embedded
+                        inside this photo.
+                    </p>
+
+                    <p>
+                        It may reveal editing software,
+                        creator details or editing history.
+                    </p>
+
+                {% else %}
+
+                    <p class="safe">
+                        ✓ No XMP metadata detected
+                    </p>
+
+                    <p>
+                        No XMP information was found
+                        inside this photo.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- IPTC METADATA -->
+
+            <div class="metadata-card">
+
+                <div class="card-icon">
+                    🗂️
+                </div>
+
+                <h3>IPTC Metadata</h3>
+
+
+                {% if iptc_found %}
+
+                    <p class="detected">
+                        ⚠ IPTC METADATA DETECTED
+                    </p>
+
+                    <p>
+                        Publishing metadata is embedded
+                        inside this photo.
+                    </p>
+
+                    <p>
+                        It may contain creator,
+                        copyright or descriptive information.
+                    </p>
+
+                {% else %}
+
+                    <p class="safe">
+                        ✓ No IPTC metadata detected
+                    </p>
+
+                    <p>
+                        No IPTC publishing information
+                        was found inside this photo.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             WHY THIS SCORE
+        ========================================== -->
+
+        <section class="breakdown">
+
+            <h2>🧮 Why this score?</h2>
+
+
+            <!-- GPS -->
+
+            <div class="score-row">
+
+                <span class="score-label">
+                    📍 GPS Location
+                </span>
+
+                {% if gps_found %}
+
+                    <span class="score-result detected-score">
+                        Detected - 40 points
+                    </span>
+
+                {% else %}
+
+                    <span class="score-result safe-score">
+                        Not detected - 0 points
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- DEVICE -->
+
+            <div class="score-row">
+
+                <span class="score-label">
+                    📱 Device Information
+                </span>
+
+                {% if brand != "Not found" or model != "Not found" %}
+
+                    <span class="score-result detected-score">
+                        Detected - 25 points
+                    </span>
+
+                {% else %}
+
+                    <span class="score-result safe-score">
+                        Not detected - 0 points
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- TIMESTAMP -->
+
+            <div class="score-row">
+
+                <span class="score-label">
+                    🕒 Photo Timestamp
+                </span>
+
+                {% if date_time != "Not found" %}
+
+                    <span class="score-result detected-score">
+                        Detected - 20 points
+                    </span>
+
+                {% else %}
+
+                    <span class="score-result safe-score">
+                        Not detected - 0 points
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- XMP -->
+
+            <div class="score-row">
+
+                <span class="score-label">
+                    🧬 XMP Metadata
+                </span>
+
+                {% if xmp_found %}
+
+                    <span class="score-result detected-score">
+                        Detected - 10 points
+                    </span>
+
+                {% else %}
+
+                    <span class="score-result safe-score">
+                        Not detected - 0 points
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- IPTC -->
+
+            <div class="score-row">
+
+                <span class="score-label">
+                    📁 IPTC Metadata
+                </span>
+
+                {% if iptc_found %}
+
+                    <span class="score-result detected-score">
+                        Detected - 5 points
+                    </span>
+
+                {% else %}
+
+                    <span class="score-result safe-score">
+                        Not detected - 0 points
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             CLEANING ACTION
+        ========================================== -->
+
+        {% if privacy_score == 100 %}
+
+            <section class="action-card">
+
+                <div class="action-text">
+
+                    <h2>
+                        ✅ This photo is already clean
+                    </h2>
+
+                    <p>
+                        No sensitive metadata was detected in
+                        the fields checked by Digital Tattoo.
+                        No cleaning is required.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        {% else %}
+
+            <section class="action-card">
+
+                <div class="action-text">
+
+                    <h2>
+                        Ready to protect this photo?
+                    </h2>
+
+                    <p>
+                        Create a clean copy without the sensitive
+                        metadata detected by Digital Tattoo.
+                        The cleaned copy will then be rescanned
+                        to verify that the selected metadata
+                        has been removed.
+                    </p>
+
+                </div>
+
+
+                <form action="/clean" method="POST">
+
+                    <button
+                        type="submit"
+                        class="clean-action-btn"
+                    >
+                        🧹 REMOVE SENSITIVE METADATA
+                    </button>
+
+                </form>
+
+            </section>
+
+        {% endif %}
+
+
+
+        <a class="scan-again" href="/">
+            ← Scan Another Photo
+        </a>
+
+
+    </main>
+
+
+
+    <!-- =========================================
+         GPS SCRIPT
+    ========================================== -->
+
+    <script>
+
+        function toggleGPS() {
+
+            const coordinates =
+                document.getElementById("gpsCoordinates");
+
+            const button =
+                document.getElementById("gpsButton");
+
+
+            if (!coordinates || !button) {
+                return;
+            }
+
+
+            if (coordinates.style.display === "none") {
+
+                coordinates.style.display = "block";
+
+                button.innerText =
+                    "🙈 Hide GPS Coordinates";
+
+            }
+
+            else {
+
+                coordinates.style.display = "none";
+
+                button.innerText =
+                    "👁 Reveal GPS Coordinates";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>

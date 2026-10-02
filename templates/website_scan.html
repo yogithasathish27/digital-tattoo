@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Tattoo | Website Privacy Scanner</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --copper: #e79a58;
+            --copper-light: #ffb56f;
+            --copper-dark: #b96f36;
+            --copper-soft: rgba(231, 154, 88, 0.10);
+            --copper-border: rgba(231, 154, 88, 0.24);
+
+            --page-bg: #0b1117;
+            --card-bg: rgba(22, 29, 36, 0.92);
+            --card-bg-2: rgba(27, 35, 43, 0.94);
+
+            --text-main: #f4f5f6;
+            --text-muted: #aeb7bf;
+
+            --safe: #69eeb0;
+            --danger: #ff9b8d;
+            --warning: #ffc36b;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(231, 154, 88, 0.09), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(200, 117, 68, 0.06), transparent 30%),
+                var(--page-bg);
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        .navbar {
+            background: rgba(10, 15, 20, 0.97);
+            border-bottom: 1px solid rgba(231, 154, 88, 0.16);
+            padding: 17px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .brand img {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 10px;
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(231, 154, 88, 0.30));
+        }
+
+        .brand span {
+            color: #ffffff;
+        }
+
+        .brand .tattoo {
+            color: var(--copper);
+        }
+
+        .scanner-status {
+            color: #a7b0b7;
+            font-size: 13px;
+        }
+
+        .scanner-status strong {
+            color: #5ef0aa;
+        }
+
+        /* =========================================
+           MAIN PAGE
+        ========================================= */
+
+        .page {
+            width: min(1100px, 92%);
+            margin: 45px auto 70px;
+        }
+
+        .page-heading {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid var(--copper);
+            border-radius: 999px;
+            color: var(--copper-light);
+            background: rgba(231, 154, 88, 0.08);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            margin-bottom: 15px;
+        }
+
+        .page-heading h1 {
+            font-size: 38px;
+            margin-bottom: 9px;
+        }
+
+        .page-heading p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 900px;
+        }
+
+        /* =========================================
+           SCAN PANEL
+        ========================================= */
+
+        .scan-panel {
+            position: relative;
+            padding: 32px;
+            border-radius: 22px;
+            background: linear-gradient(145deg, rgba(33, 37, 40, 0.96), rgba(22, 25, 27, 0.98));
+            border: 1px solid rgba(231, 154, 88, 0.24);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .scan-panel::before {
+            content: "";
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            background: #e79a58;
+            filter: blur(100px);
+            opacity: 0.13;
+            top: -70px;
+            right: -50px;
+        }
+
+        .scan-panel h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .scan-panel > p {
+            color: #c8c4bc;
+            line-height: 1.7;
+            max-width: 780px;
+            margin-bottom: 20px;
+        }
+
+        .url-form {
+            display: flex;
+            gap: 12px;
+            max-width: 700px;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 15px 18px;
+            border-radius: 13px;
+            border: 1px solid rgba(231, 154, 88, 0.30);
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--text-main);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .url-input:focus {
+            border-color: var(--copper);
+        }
+
+        .url-input::placeholder {
+            color: #6b7178;
+        }
+
+        .scan-button {
+            padding: 15px 28px;
+            border: none;
+            border-radius: 13px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-family: inherit;
+            color: #26160b;
+            background: linear-gradient(90deg, #ffb56f, #e79a58);
+            box-shadow: 0 10px 30px rgba(231, 154, 88, 0.20);
+            transition: 0.25s;
+            white-space: nowrap;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 35px rgba(231, 154, 88, 0.30);
+        }
+
+        .scan-note {
+            margin-top: 15px;
+            color: #a7a49e;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .scan-note span {
+            color: #f0a35e;
+        }
+
+        /* =========================================
+           ERROR MESSAGE
+        ========================================= */
+
+        .error-box {
+            padding: 18px 22px;
+            border-radius: 14px;
+            background: rgba(255, 95, 87, 0.08);
+            border: 1px solid rgba(255, 95, 87, 0.25);
+            color: #ff9b8d;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .error-box strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* =========================================
+           RESULTS SECTIONS
+        ========================================= */
+
+        .section-title {
+            margin: 35px 0 16px;
+            font-size: 22px;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .metadata-card {
+            background: rgba(22, 29, 36, 0.92);
+            border: 1px solid rgba(231, 154, 88, 0.17);
+            border-radius: 18px;
+            padding: 22px;
+            min-height: 180px;
+            transition: 0.25s ease;
+        }
+
+        .metadata-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(231, 154, 88, 0.48);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+        }
+
+        .metadata-card.wide {
+            grid-column: 1 / -1;
+            min-height: 0;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(231, 154, 88, 0.11);
+            border: 1px solid rgba(231, 154, 88, 0.13);
+            margin-bottom: 15px;
+            font-size: 21px;
+        }
+
+        .metadata-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .metadata-card p {
+            color: #b8bec3;
+            line-height: 1.6;
+            margin: 8px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .detected {
+            color: var(--danger) !important;
+            font-weight: 700;
+        }
+
+        .safe {
+            color: var(--safe) !important;
+            font-weight: 700;
+        }
+
+        .warn-text {
+            color: var(--warning) !important;
+            font-weight: 700;
+        }
+
+        /* =========================================
+           SCORE CARD
+        ========================================= */
+
+        .score-card {
+            background: linear-gradient(135deg, rgba(38, 34, 31, 0.96), rgba(19, 25, 31, 0.97));
+            border: 1px solid var(--copper-border);
+            border-radius: 22px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 210px 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .score-circle {
+            width: 185px;
+            height: 185px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #11171d;
+            border: 7px solid var(--copper);
+            box-shadow: 0 0 30px var(--copper-glow, rgba(231, 154, 88, 0.20)), inset 0 0 25px rgba(231, 154, 88, 0.05);
+            padding: 20px;
+        }
+
+        .score-circle.level-low {
+            border-color: #57d68d;
+            box-shadow: 0 0 30px rgba(87, 214, 141, 0.40), inset 0 0 25px rgba(87, 214, 141, 0.06);
+        }
+
+        .score-circle.level-medium {
+            border-color: #f0a35e;
+            box-shadow: 0 0 30px rgba(240, 163, 94, 0.45), inset 0 0 25px rgba(240, 163, 94, 0.06);
+        }
+
+        .score-circle.level-high {
+            border-color: #ff5f57;
+            box-shadow: 0 0 30px rgba(255, 95, 87, 0.45), inset 0 0 25px rgba(255, 95, 87, 0.06);
+        }
+
+        .score-number {
+            font-size: 46px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .score-out-of {
+            color: #a2a9af;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.4px;
+        }
+
+        .score-content h2 {
+            font-size: 18px;
+            color: #c0c4c7;
+            margin-bottom: 10px;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 15px;
+            border-radius: 999px;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .risk-badge.high {
+            color: #ff8d8d;
+            background: rgba(255, 73, 73, 0.12);
+            border: 1px solid rgba(255, 83, 83, 0.35);
+        }
+
+        .risk-badge.medium {
+            color: #ffc36b;
+            background: rgba(255, 166, 49, 0.12);
+            border: 1px solid rgba(255, 166, 49, 0.35);
+        }
+
+        .risk-badge.low {
+            color: #68efad;
+            background: rgba(52, 222, 139, 0.11);
+            border: 1px solid rgba(52, 222, 139, 0.35);
+        }
+
+        .score-message {
+            color: #c7cdd1;
+            line-height: 1.7;
+            max-width: 650px;
+        }
+
+        .assessment-note {
+            margin-top: 14px;
+            padding: 11px;
+            border-radius: 10px;
+            background: rgba(231, 154, 88, 0.06);
+            border: 1px solid rgba(231, 154, 88, 0.16);
+            font-size: 12px;
+            color: #b9b8b3;
+            line-height: 1.6;
+        }
+
+        /* =========================================
+           HEADER LIST
+        ========================================= */
+
+        .header-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .header-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #d4d0c8;
+        }
+
+        .header-status {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 999px;
+        }
+
+        .header-status.observed {
+            color: #68efad;
+            background: rgba(52, 222, 139, 0.11);
+            border: 1px solid rgba(52, 222, 139, 0.30);
+        }
+
+        .header-status.missing {
+            color: #ffc36b;
+            background: rgba(255, 166, 49, 0.10);
+            border: 1px solid rgba(255, 166, 49, 0.28);
+        }
+
+        /* =========================================
+           COOKIE TABLE
+        ========================================= */
+
+        .cookie-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .cookie-item {
+            padding: 14px 16px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cookie-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #d4d0c8;
+            margin-bottom: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .cookie-attrs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .cookie-attr {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .cookie-attr.good {
+            color: #68efad;
+            background: rgba(52, 222, 139, 0.10);
+            border: 1px solid rgba(52, 222, 139, 0.25);
+        }
+
+        .cookie-attr.bad {
+            color: #ffc36b;
+            background: rgba(255, 166, 49, 0.08);
+            border: 1px solid rgba(255, 166, 49, 0.22);
+        }
+
+        .cookie-attr.neutral {
+            color: #92908b;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        /* =========================================
+           DOMAIN LIST
+        ========================================= */
+
+        .domain-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 10px;
+        }
+
+        .domain-chip {
+            padding: 7px 13px;
+            border-radius: 999px;
+            background: rgba(0, 217, 255, 0.06);
+            border: 1px solid rgba(231, 154, 88, 0.18);
+            color: #8fd8ea;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .domain-chip.none {
+            color: #92908b;
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.10);
+        }
+
+        /* =========================================
+           BREAKDOWN
+        ========================================= */
+
+        .breakdown {
+            background: rgba(22, 29, 36, 0.92);
+            border: 1px solid rgba(231, 154, 88, 0.17);
+            border-radius: 18px;
+            padding: 25px 28px;
+            margin-top: 25px;
+        }
+
+        .breakdown h2 {
+            margin-bottom: 14px;
+            font-size: 23px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 58px;
+            padding: 12px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            gap: 30px;
+        }
+
+        .score-row:last-child {
+            border-bottom: none;
+        }
+
+        .score-label {
+            flex: 1;
+            color: #f0f2f3;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .score-detail {
+            display: block;
+            color: #92908b;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .score-result {
+            min-width: 150px;
+            text-align: right;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .detected-score {
+            color: var(--danger);
+        }
+
+        .safe-score {
+            color: var(--safe);
+        }
+
+        .score-total-row {
+            margin-top: 10px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(231, 154, 88, 0.28);
+            border-bottom: none;
+        }
+
+        .score-total-row .score-result {
+            color: #ffb56f;
+            font-size: 18px;
+        }
+
+        /* =========================================
+           LIMITATIONS
+        ========================================= */
+
+        .limitations-card {
+            background: rgba(22, 29, 36, 0.92);
+            border: 1px solid rgba(231, 154, 88, 0.17);
+            border-radius: 18px;
+            padding: 25px 28px;
+            margin-top: 25px;
+        }
+
+        .limitations-card h2 {
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .limitations-card ul {
+            margin-left: 20px;
+            color: #b8bec3;
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        /* =========================================
+           PRIVACY BOTH DIRECTIONS
+        ========================================= */
+
+        .directions-card {
+            background: linear-gradient(135deg, rgba(231, 154, 88, 0.08), rgba(22, 29, 36, 0.92));
+            border: 1px solid rgba(231, 154, 88, 0.20);
+            border-radius: 18px;
+            padding: 28px;
+            margin-top: 25px;
+        }
+
+        .directions-card h2 {
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+        .directions-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .direction-box {
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(231, 154, 88, 0.25);
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--copper-light);
+        }
+
+        .direction-arrow {
+            color: var(--copper);
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .directions-card p {
+            color: #b8bec3;
+            line-height: 1.7;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* =========================================
+           ACTION SECTION
+        ========================================= */
+
+        .action-card {
+            margin-top: 25px;
+            padding: 27px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(200, 117, 68, 0.12), rgba(22, 29, 36, 0.92));
+            border: 1px solid rgba(231, 154, 88, 0.22);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-text h2 {
+            margin-bottom: 8px;
+        }
+
+        .action-text p {
+            color: #b4bbc0;
+            line-height: 1.6;
+        }
+
+        .clean-action-btn {
+            border: none;
+            min-width: 235px;
+            padding: 16px 22px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #21140c;
+            background: linear-gradient(90deg, #d9874d, #f0a35e);
+            box-shadow: 0 10px 28px rgba(231, 154, 88, 0.20);
+            transition: 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .clean-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 13px 32px rgba(231, 154, 88, 0.28);
+        }
+
+        .scan-again {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--copper-light);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .scan-again:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 900px) {
+            .metadata-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-circle {
+                margin: auto;
+            }
+
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .clean-action-btn {
+                width: 100%;
+            }
+
+            .scanner-status {
+                display: none;
+            }
+
+            .score-row {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .score-result {
+                min-width: 110px;
+            }
+
+            .page-heading h1 {
+                font-size: 30px;
+            }
+
+            .url-form {
+                flex-direction: column;
+            }
+
+            .scan-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <img
+                src="{{ url_for('static', filename='images/digital-tattoo-logo.jpeg') }}"
+                alt="Digital Tattoo Logo"
+            >
+
+            <span>
+                Digital <span class="tattoo">Tattoo</span>
+            </span>
+
+        </div>
+
+        <div class="scanner-status">
+            <strong>&#9679;</strong> Passive Website Analysis
+        </div>
+
+    </nav>
+
+
+    <main class="page">
+
+        <!-- =========================================
+             PAGE HEADING
+        ========================================== -->
+
+        <section class="page-heading">
+
+            <div class="eyebrow">
+                WEBSITE PRIVACY SCANNER
+            </div>
+
+            <h1>&#128270; Website Privacy Scan</h1>
+
+            <p>
+                Enter a public website address and Digital Tattoo will inspect
+                publicly observable privacy and security signals returned by
+                that website. This complements the Browser Privacy Scanner:
+                the browser scanner shows what your browser reveals, while
+                this tool shows what a website publicly exposes.
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             SCAN PANEL
+        ========================================== -->
+
+        <section class="scan-panel">
+
+            <h2>&#128269; Scan a Website</h2>
+
+            <p>
+                Enter a public website address and Digital Tattoo will inspect
+                publicly observable privacy and security signals.
+            </p>
+
+            <form class="url-form" action="/website-scan" method="POST">
+                <input
+                    type="text"
+                    name="url"
+                    class="url-input"
+                    placeholder="https://example.com"
+                    value="{{ scanned_url if scanned_url else '' }}"
+                    required
+                >
+                <button type="submit" class="scan-button">
+                    &#128269; SCAN WEBSITE
+                </button>
+            </form>
+
+            <div class="scan-note">
+                <span>&#128274;</span>
+                Passive analysis only. Digital Tattoo does not attack, exploit,
+                log in to, or modify the website. Only publicly observable
+                signals from the website's response are analyzed.
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             ERROR MESSAGE
+        ========================================== -->
+
+        {% if error %}
+
+            <div class="error-box">
+                <strong>&#9888; Scan could not be completed</strong>
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- =========================================
+             RESULTS
+        ========================================== -->
+
+        {% if show_results and result %}
+
+            <!-- ===== WEBSITE TRACE FOUND ===== -->
+
+            <h2 class="section-title">
+                Website Trace Found
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card">
+                    <div class="card-icon">&#128205;</div>
+                    <h3>Hostname</h3>
+                    <p>{{ result.hostname }}</p>
+                </div>
+
+                <div class="metadata-card">
+                    <div class="card-icon">&#128279;</div>
+                    <h3>Requested URL</h3>
+                    <p>{{ result.requested_url }}</p>
+                </div>
+
+                <div class="metadata-card">
+                    <div class="card-icon">&#128640;</div>
+                    <h3>Final URL</h3>
+                    <p>{{ result.final_url }}</p>
+                    {% if result.redirect_chain %}
+                        <p style="font-size:12px; color:#92908b;">
+                            {{ result.redirect_chain|length }} redirect(s) followed
+                        </p>
+                    {% endif %}
+                </div>
+
+            </section>
+
+
+            <!-- ===== WEBSITE EXPOSURE SCORE ===== -->
+
+            <h2 class="section-title">
+                Website Exposure Score
+            </h2>
+
+            <section class="score-card">
+
+                <div class="score-grid">
+
+                    <div class="score-circle level-{{ result.level }}">
+                        <div class="score-number">{{ result.score }}</div>
+                        <div class="score-out-of">/ 100</div>
+                    </div>
+
+                    <div class="score-content">
+
+                        <h2>Observed-Exposure Assessment</h2>
+
+                        <div class="risk-badge {{ result.level }}">
+                            {% if result.level == 'low' %}&#128994;{% elif result.level == 'medium' %}&#128993;{% else %}&#128308;{% endif %}
+                            {{ result.level_text }}
+                        </div>
+
+                        <p class="score-message">
+                            {% if result.level == 'low' %}
+                                Few observable privacy or security concerns were detected
+                                in the signals tested during this scan.
+                            {% elif result.level == 'medium' %}
+                                Some observable privacy or security concerns were detected
+                                in the signals tested during this scan.
+                            {% else %}
+                                Several observable privacy or security concerns were detected
+                                in the signals tested during this scan.
+                            {% endif %}
+                        </p>
+
+                        <div class="assessment-note">
+                            Educational estimate &mdash; not a standardized website security
+                            rating. This score reflects only privacy and security signals
+                            observed during this scan.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== HTTPS ===== -->
+
+            <h2 class="section-title">
+                HTTPS
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card wide">
+                    <div class="card-icon">&#128274;</div>
+                    <h3>Connection Encryption</h3>
+
+                    {% if result.https_active %}
+
+                        <p class="safe">
+                            &#10003; HTTPS Active
+                        </p>
+
+                        <p>
+                            HTTPS encrypts data while it travels between the user
+                            and the website. This protects the connection from
+                            eavesdropping and tampering in transit.
+                        </p>
+
+                    {% else %}
+
+                        <p class="detected">
+                            &#10007; HTTPS Not Active
+                        </p>
+
+                        <p>
+                            The website was scanned over an unencrypted HTTP
+                            connection. Data transmitted over HTTP is not
+                            encrypted in transit and may be observable by
+                            third parties on the network path.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== SECURITY HEADERS ===== -->
+
+            <h2 class="section-title">
+                Security Headers
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card wide">
+                    <div class="card-icon">&#128737;</div>
+                    <h3>Defensive Header Observation</h3>
+
+                    <p style="margin-bottom:14px;">
+                        {% set observed_count = result.security_headers.values()|select|list|length %}
+                        {{ observed_count }} of {{ result.security_headers|length }} tested security headers observed.
+                        A missing header does not automatically mean the website is vulnerable.
+                    </p>
+
+                    <div class="header-list">
+
+                        {% for header, observed in result.security_headers.items() %}
+
+                            <div class="header-item">
+                                <span class="header-name">{{ header }}</span>
+                                <span class="header-status {{ 'observed' if observed else 'missing' }}">
+                                    {{ 'Observed' if observed else 'Not observed' }}
+                                </span>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== COOKIES ===== -->
+
+            <h2 class="section-title">
+                Cookies
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card wide">
+                    <div class="card-icon">&#127850;</div>
+                    <h3>Set-Cookie Headers Observed</h3>
+
+                    <p style="margin-bottom:6px;">
+                        {{ result.cookies|length }} cookie(s) observed in the scanned HTTP response.
+                    </p>
+
+                    <p style="font-size:12px; color:#92908b; margin-bottom:14px;">
+                        These are cookies visible in the scanned HTTP response only.
+                        This does not represent every cookie the website may ever use.
+                    </p>
+
+                    {% if result.cookies %}
+
+                        <div class="cookie-list">
+
+                            {% for cookie in result.cookies %}
+
+                                <div class="cookie-item">
+                                    <div class="cookie-name">{{ cookie.name }}</div>
+                                    <div class="cookie-attrs">
+                                        <span class="cookie-attr {{ 'good' if cookie.secure else 'bad' }}">
+                                            Secure: {{ 'Yes' if cookie.secure else 'No' }}
+                                        </span>
+                                        <span class="cookie-attr {{ 'good' if cookie.httponly else 'bad' }}">
+                                            HttpOnly: {{ 'Yes' if cookie.httponly else 'No' }}
+                                        </span>
+                                        <span class="cookie-attr {{ 'good' if cookie.samesite else 'neutral' }}">
+                                            SameSite: {{ cookie.samesite if cookie.samesite else 'Not set' }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="safe">
+                            &#10003; No Set-Cookie headers observed in the scanned response.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== THIRD-PARTY DOMAINS ===== -->
+
+            <h2 class="section-title">
+                Third-Party Domains
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card wide">
+                    <div class="card-icon">&#127760;</div>
+                    <h3>Externally Loaded Resources</h3>
+
+                    <p style="margin-bottom:6px;">
+                        {{ result.third_party_domains|length }} unique third-party domain(s) observed.
+                    </p>
+
+                    <p style="font-size:12px; color:#92908b; margin-bottom:14px;">
+                        This represents resources visible in the scanned response and
+                        may not include resources loaded later dynamically by JavaScript.
+                    </p>
+
+                    {% if result.third_party_domains %}
+
+                        <div class="domain-list">
+
+                            {% for domain in result.third_party_domains %}
+
+                                <span class="domain-chip">{{ domain }}</span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="safe">
+                            &#10003; No third-party domains detected in the scanned response.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== TRACKING / ANALYTICS INDICATORS ===== -->
+
+            <h2 class="section-title">
+                Tracking / Analytics Indicators
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card wide">
+                    <div class="card-icon">&#128202;</div>
+                    <h3>Recognizable Indicators</h3>
+
+                    {% if result.tracking_indicators %}
+
+                        <p class="warn-text" style="margin-bottom:14px;">
+                            Observed tracking/analytics indicators:
+                        </p>
+
+                        <div class="domain-list">
+
+                            {% for indicator in result.tracking_indicators %}
+
+                                <span class="domain-chip">{{ indicator }}</span>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <p style="font-size:12px; color:#92908b; margin-top:14px;">
+                            The presence of these indicators does not prove malicious
+                            tracking, and their absence does not mean no tracking exists.
+                        </p>
+
+                    {% else %}
+
+                        <p class="safe">
+                            &#10003; No recognizable tracking/analytics indicators observed
+                            in the scanned response.
+                        </p>
+
+                        <p style="font-size:12px; color:#92908b; margin-top:10px;">
+                            This does not guarantee the absence of tracking. Some trackers
+                            may load dynamically or use non-standard patterns.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== PRIVACY POLICIES / HEADERS ===== -->
+
+            <h2 class="section-title">
+                Privacy Policies / Headers
+            </h2>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card">
+                    <div class="card-icon">&#128196;</div>
+                    <h3>Referrer-Policy</h3>
+
+                    {% if result.referrer_policy %}
+
+                        <p class="safe">
+                            &#10003; Observed
+                        </p>
+
+                        <p style="font-size:13px;">
+                            {{ result.referrer_policy }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="warn-text">
+                            &#10007; Not observed
+                        </p>
+
+                        <p style="font-size:13px;">
+                            The website did not send a Referrer-Policy header.
+                            Without this header, the browser may send the full
+                            URL of the referring page as the Referer header.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="metadata-card">
+                    <div class="card-icon">&#128275;</div>
+                    <h3>Permissions-Policy</h3>
+
+                    {% if result.permissions_policy %}
+
+                        <p class="safe">
+                            &#10003; Observed
+                        </p>
+
+                        <p style="font-size:13px;">
+                            {{ result.permissions_policy }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="warn-text">
+                            &#10007; Not observed
+                        </p>
+
+                        <p style="font-size:13px;">
+                            The website did not send a Permissions-Policy header.
+                            This header tells browsers which device features
+                            (camera, microphone, etc.) the website may request.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ===== WHY THIS SCORE ===== -->
+
+            <section class="breakdown">
+
+                <h2>&#129518; Why This Score?</h2>
+
+                <p style="color:#92908b; font-size:12px; margin-bottom:14px; line-height:1.6;">
+                    Every point in the observed-exposure score is listed below with
+                    the exact reason it was added. The total is the sum of all points,
+                    capped at 100.
+                </p>
+
+                {% for item in result.breakdown %}
+
+                    <div class="score-row">
+                        <span class="score-label">
+                            {{ item.label }}
+                            <span class="score-detail">{{ item.detail }}</span>
+                        </span>
+                        <span class="score-result detected-score">
+                            +{{ item.points }}
+                        </span>
+                    </div>
+
+                {% endfor %}
+
+                <div class="score-row score-total-row">
+                    <span class="score-label">
+                        <strong>Total Observed-Exposure Score</strong>
+                    </span>
+                    <span class="score-result">
+                        {{ result.score }}/100
+                    </span>
+                </div>
+
+            </section>
+
+
+            <!-- ===== LIMITATIONS ===== -->
+
+            <section class="limitations-card">
+
+                <h2>&#128269; Limitations &mdash; What This Scan Cannot See</h2>
+
+                <ul>
+                    <li>Everything a website collects after interaction (forms, clicks, login).</li>
+                    <li>Information collected after login or behind authentication.</li>
+                    <li>Server-side data processing or database contents.</li>
+                    <li>Complete JavaScript runtime behavior.</li>
+                    <li>Every dynamically loaded tracker or resource.</li>
+                    <li>Whether a website is completely safe or malicious.</li>
+                </ul>
+
+                <p style="margin-top:14px; font-size:12px; color:#92908b;">
+                    This tool performs a passive analysis of publicly observable signals
+                    only. It is not a complete security audit and does not guarantee
+                    any level of website safety.
+                </p>
+
+            </section>
+
+
+            <!-- ===== PRIVACY WORKS IN BOTH DIRECTIONS ===== -->
+
+            <section class="directions-card">
+
+                <h2>&#128257; Privacy Works in Both Directions</h2>
+
+                <div class="directions-flow">
+                    <div class="direction-box">YOUR BROWSER</div>
+                    <div class="direction-arrow">&darr;</div>
+                    <div class="direction-box">WHAT IT REVEALS</div>
+                    <div class="direction-arrow">&darr;</div>
+                    <div class="direction-box">THE WEBSITE</div>
+                    <div class="direction-arrow">&darr;</div>
+                    <div class="direction-box">WHAT WE CAN OBSERVE</div>
+                </div>
+
+                <p>
+                    The <strong>Browser Privacy Scanner</strong> demonstrates information
+                    the browser can reveal to the current page &mdash; what your browser
+                    introduces before you say a word.
+                </p>
+
+                <p>
+                    The <strong>Website Privacy Scanner</strong> examines publicly
+                    observable signals returned by a chosen public website &mdash; what
+                    the website exposes in its HTTP response and loaded resources.
+                </p>
+
+                <p>
+                    The Website Scanner does <strong>not</strong> read Chrome/Firefox
+                    browsing history or inspect other open tabs. It only analyzes
+                    what the chosen website publicly returns when Digital Tattoo
+                    requests its homepage.
+                </p>
+
+            </section>
+
+
+            <!-- ===== ACTION SECTION ===== -->
+
+            <section class="action-card">
+
+                <div class="action-text">
+
+                    <h2>&#128737; Scan Another Website</h2>
+
+                    <p>
+                        Try scanning a different public website to compare
+                        observable privacy and security signals.
+                    </p>
+
+                </div>
+
+                <a href="/website-scan" class="clean-action-btn">
+                    &#128269; SCAN ANOTHER WEBSITE
+                </a>
+
+            </section>
+
+            <a class="scan-again" href="/">
+                &larr; Back to Digital Tattoo Home
+            </a>
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>

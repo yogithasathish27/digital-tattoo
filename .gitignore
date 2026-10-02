@@ -1,0 +1,24 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Python virtual environment
+venv/
+.venv/
+
+# User-uploaded photos
+uploads/*
+
+# Environment variables / secrets
+.env
+
+# VS Code settings
+.vscode/
+
+# Windows/macOS generated files
+Thumbs.db
+.DS_Store
+gps_test.jpg
+test.jpg
+metadata_test.py
+static/images/*

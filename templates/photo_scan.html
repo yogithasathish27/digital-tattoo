@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Photo Privacy Scanner | Digital Tattoo</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(196,127,84,0.08), transparent 30%),
+                #0d0f12;
+            color: #f4f1ec;
+        }
+
+        .navbar {
+            padding: 22px 8%;
+            border-bottom: 1px solid #292d32;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .back {
+            color: #c47f54;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .container {
+            min-height: calc(100vh - 75px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        .scanner {
+            width: 100%;
+            max-width: 650px;
+            padding: 45px;
+            background: #15181c;
+            border: 1px solid #34383e;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+
+        .tag {
+            color: #c47f54;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #aeb3ba;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .upload-box {
+            border: 1px dashed #c47f54;
+            border-radius: 14px;
+            padding: 42px 25px;
+            text-align: center;
+            background: #101215;
+            margin-bottom: 20px;
+        }
+
+        .icon {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .upload-box h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .upload-box p {
+            color: #8f959d;
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        input[type="file"] {
+            max-width: 100%;
+            color: #c5c8cc;
+        }
+
+        .scan-button {
+            width: 100%;
+            border: none;
+            border-radius: 9px;
+            padding: 16px;
+            margin-top: 20px;
+
+            background: #c47f54;
+            color: #111;
+
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+
+            cursor: pointer;
+        }
+
+        .scan-button:hover {
+            background: #d89268;
+        }
+
+        .privacy-note {
+            text-align: center;
+            color: #65d6c4;
+            font-size: 12px;
+            margin-top: 18px;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .feature {
+            border: 1px solid #30343a;
+            background: #101215;
+            padding: 9px 12px;
+            border-radius: 7px;
+            color: #aeb3ba;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="brand">
+            🔐 Digital Tattoo
+        </div>
+
+        <a href="/" class="back">
+            ← Back to Home
+        </a>
+
+    </nav>
+
+
+    <main class="container">
+
+        <section class="scanner">
+
+            <div class="tag">
+                PHOTO PRIVACY SCANNER
+            </div>
+
+            <h1>Scan Your Photo</h1>
+
+            <p class="description">
+                Upload a photo to inspect hidden metadata that may reveal
+                information about the image, device, time or location.
+            </p>
+
+
+            <!-- KEEPING YOUR EXISTING /scan BACKEND -->
+
+            <form action="/scan"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <div class="upload-box">
+
+                    <div class="icon">
+                        🖼️
+                    </div>
+
+                    <h2>Choose a photo</h2>
+
+                    <p>
+                        Select an image from your device
+                    </p>
+
+                    <input
+                        type="file"
+                        name="photo"
+                        accept="image/*"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="scan-button">
+
+                    🔍 SCAN MY PHOTO
+
+                </button>
+
+            </form>
+
+
+            <div class="privacy-note">
+                ● Inspect the metadata stored inside the selected image
+            </div>
+
+
+            <div class="features">
+
+                <div class="feature">
+                    ✓ EXIF Metadata
+                </div>
+
+                <div class="feature">
+                    ✓ GPS Location
+                </div>
+
+                <div class="feature">
+                    ✓ Device Information
+                </div>
+
+                <div class="feature">
+                    ✓ Photo Timestamp
+                </div>
+
+                <div class="feature">
+                    ✓ XMP Metadata
+                </div>
+
+                <div class="feature">
+                    ✓ IPTC Metadata
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

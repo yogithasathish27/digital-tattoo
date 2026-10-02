@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Tattoo | Digital Privacy Awareness</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #0d0f12;
+            --card: #15181c;
+            --card-dark: #101215;
+            --border: #30343a;
+
+            --text: #f4f1ec;
+            --muted: #aeb3ba;
+
+            /* PHOTO SCANNER */
+            --copper: #c47f54;
+            --copper-light: #e29a6e;
+
+            /* BROWSER SCANNER */
+            --teal: #65d6c4;
+            --teal-dark: #42b9aa;
+
+            /* WEBSITE SCANNER */
+            --gold: #e8b04b;
+            --gold-light: #f0c060;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(196, 127, 84, 0.08),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 85% 75%,
+                    rgba(101, 214, 196, 0.06),
+                    transparent 25%
+                ),
+                var(--background);
+
+            color: var(--text);
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        .navbar {
+            height: 82px;
+            padding: 0 8%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid #292d32;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .brand img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 10px rgba(101, 214, 196, 0.6);
+        }
+
+
+        /* =========================
+           HERO
+        ========================== */
+
+        .hero {
+            max-width: 1100px;
+            margin: auto;
+
+            padding: 75px 30px 45px;
+
+            text-align: center;
+        }
+
+        .tag {
+            display: inline-block;
+
+            padding: 8px 13px;
+            margin-bottom: 22px;
+
+            border: 1px solid rgba(196, 127, 84, 0.55);
+            border-radius: 6px;
+
+            color: var(--copper-light);
+            background: rgba(196, 127, 84, 0.06);
+
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.7px;
+        }
+
+        .hero h1 {
+            max-width: 780px;
+            margin: auto;
+
+            font-size: clamp(42px, 6vw, 68px);
+            line-height: 1.03;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            color: var(--copper-light);
+        }
+
+        .hero-description {
+            max-width: 720px;
+            margin: 25px auto 0;
+
+            color: var(--muted);
+
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           TOOLS
+        ========================== */
+
+        .tools-section {
+            max-width: 1050px;
+            margin: auto;
+
+            padding: 25px 30px 85px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .section-heading .small-title {
+            color: var(--copper-light);
+
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .section-heading h2 {
+            margin-top: 8px;
+
+            font-size: 30px;
+        }
+
+        .section-heading p {
+            max-width: 650px;
+            margin: 10px auto 0;
+
+            color: var(--muted);
+
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 22px;
+        }
+
+
+        /* =========================
+           GENERAL CARD
+        ========================== */
+
+        .tool-card {
+            position: relative;
+
+            min-height: 410px;
+            padding: 34px;
+
+            display: flex;
+            flex-direction: column;
+
+            background: linear-gradient(
+                145deg,
+                #171a1f,
+                #111317
+            );
+
+            border: 1px solid var(--border);
+            border-radius: 16px;
+
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+        }
+
+
+        /* =========================
+           PHOTO CARD
+        ========================== */
+
+        .photo-card {
+            border-color: rgba(196, 127, 84, 0.55);
+        }
+
+        .photo-card:hover {
+            border-color: var(--copper);
+            box-shadow: 0 16px 40px rgba(196, 127, 84, 0.09);
+        }
+
+
+        /* =========================
+           BROWSER CARD
+        ========================== */
+
+        .browser-card {
+            border-color: rgba(101, 214, 196, 0.48);
+        }
+
+        .browser-card:hover {
+            border-color: var(--teal);
+            box-shadow: 0 16px 40px rgba(101, 214, 196, 0.08);
+        }
+
+
+        /* =========================
+           ICONS
+        ========================== */
+
+        .tool-icon {
+            width: 52px;
+            height: 52px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 22px;
+
+            border-radius: 12px;
+
+            font-size: 25px;
+        }
+
+        .photo-icon {
+            color: var(--copper-light);
+            background: rgba(196, 127, 84, 0.13);
+            border: 1px solid rgba(196, 127, 84, 0.3);
+        }
+
+        .browser-icon {
+            color: var(--teal);
+            background: rgba(101, 214, 196, 0.10);
+            border: 1px solid rgba(101, 214, 196, 0.27);
+        }
+
+
+        /* =========================
+           CARD TEXT
+        ========================== */
+
+        .tool-label {
+            margin-bottom: 7px;
+
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .photo-label {
+            color: var(--copper-light);
+        }
+
+        .browser-label {
+            color: var(--teal);
+        }
+
+        .tool-card h3 {
+            margin-bottom: 12px;
+
+            font-size: 27px;
+        }
+
+        .tool-description {
+            min-height: 76px;
+
+            color: var(--muted);
+
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           FEATURES
+        ========================== */
+
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px 20px;
+
+            margin: 25px 0 30px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #d1d4d8;
+
+            font-size: 13px;
+        }
+
+        .photo-card .check {
+            color: var(--copper-light);
+        }
+
+        .browser-card .check {
+            color: var(--teal);
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================== */
+
+        .tool-button {
+            width: 100%;
+
+            margin-top: auto;
+            padding: 15px 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 1px;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .tool-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .photo-button {
+            color: #15100d;
+
+            background: linear-gradient(
+                135deg,
+                var(--copper-light),
+                var(--copper)
+            );
+
+            border: 1px solid var(--copper);
+        }
+
+        .photo-button:hover {
+            background: #e7a379;
+        }
+
+        .browser-button {
+            color: #07110f;
+
+            background: linear-gradient(
+                135deg,
+                var(--teal),
+                var(--teal-dark)
+            );
+
+            border: 1px solid var(--teal);
+        }
+
+        .browser-button:hover {
+            background: #78e0d0;
+        }
+
+
+        /* =========================
+           WEBSITE CARD
+        ========================== */
+
+        .website-card {
+            border-color: rgba(232, 176, 75, 0.48);
+        }
+
+        .website-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 16px 40px rgba(232, 176, 75, 0.08);
+        }
+
+        .website-icon {
+            color: var(--gold-light);
+            background: rgba(232, 176, 75, 0.10);
+            border: 1px solid rgba(232, 176, 75, 0.27);
+        }
+
+        .website-label {
+            color: var(--gold-light);
+        }
+
+        .website-card .check {
+            color: var(--gold-light);
+        }
+
+        .website-button {
+            color: #1a1208;
+
+            background: linear-gradient(
+                135deg,
+                var(--gold-light),
+                var(--gold)
+            );
+
+            border: 1px solid var(--gold);
+        }
+
+        .website-button:hover {
+            background: #f5c86e;
+        }
+
+
+        /* =========================
+           PRIVACY NOTE
+        ========================== */
+
+        .privacy-note {
+            max-width: 850px;
+
+            margin: 30px auto 0;
+            padding-top: 25px;
+
+            border-top: 1px solid #272b30;
+
+            text-align: center;
+
+            color: #777e86;
+
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================== */
+
+        @media (max-width: 800px) {
+
+            .navbar {
+                padding: 0 5%;
+            }
+
+            .status {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 55px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-description {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .hero {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .tools-section {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .tool-card {
+                padding: 27px 23px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <!-- YOUR EXISTING LOGO -->
+            <img
+                src="{{ url_for('static', filename='images/digital-tattoo-logo.jpeg') }}"
+                alt="Digital Tattoo Logo"
+            >
+
+            <span>Digital Tattoo</span>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            Privacy Tools Ready
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <section class="hero">
+
+        <div class="tag">
+            DIGITAL PRIVACY AWARENESS
+        </div>
+
+        <h1>
+            See what your
+            <br>
+            digital life <span>reveals.</span>
+        </h1>
+
+
+        <p class="hero-description">
+
+            Photos can contain hidden metadata.
+            Browsers can expose identifying signals.
+            Websites expose observable privacy signals.
+
+            Digital Tattoo lets you explore all three forms of
+            digital exposure before information is shared.
+
+        </p>
+
+    </section>
+
+
+
+    <!-- =========================
+         TWO PRIVACY TOOLS
+    ========================== -->
+
+    <section class="tools-section">
+
+        <div class="section-heading">
+
+            <div class="small-title">
+                DIGITAL TATTOO
+            </div>
+
+            <h2>
+                Three privacy tools. One app.
+            </h2>
+
+            <p>
+                Explore information stored inside photos, information
+                your browser makes available to websites, and publicly
+                observable signals from any public website.
+            </p>
+
+        </div>
+
+
+
+        <div class="tools-grid">
+
+
+            <!-- =====================
+                 PHOTO SCANNER
+            ====================== -->
+
+            <article class="tool-card photo-card">
+
+                <div class="tool-icon photo-icon">
+                    📷
+                </div>
+
+
+                <div class="tool-label photo-label">
+                    PHOTO PRIVACY SCANNER
+                </div>
+
+
+                <h3>
+                    Your photo remembers more than you do.
+                </h3>
+
+
+                <p class="tool-description">
+
+                    Inspect hidden metadata stored inside a photo,
+                    including device information, timestamps,
+                    GPS location and other supported metadata.
+
+                </p>
+
+
+                <div class="features">
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        EXIF Metadata
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        GPS Location
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        XMP & IPTC
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Privacy Score
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Metadata Removal
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Rescan Verification
+                    </div>
+
+                </div>
+
+
+                <!-- ONE PHOTO BUTTON ONLY -->
+
+                <a
+                    href="/photo-scan"
+                    class="tool-button photo-button"
+                >
+                    📷 SCAN A PHOTO
+                </a>
+
+            </article>
+
+
+
+            <!-- =====================
+                 BROWSER SCANNER
+            ====================== -->
+
+            <article class="tool-card browser-card">
+
+                <div class="tool-icon browser-icon">
+                    🌐
+                </div>
+
+
+                <div class="tool-label browser-label">
+                    BROWSER PRIVACY SCANNER
+                </div>
+
+
+                <h3>
+                    Your browser introduces you before you say a word.
+                </h3>
+
+
+                <p class="tool-description">
+
+                    Discover information your browser makes available
+                    to websites, including browser, device,
+                    screen, hardware and privacy-related signals.
+
+                </p>
+
+
+                <div class="features">
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Browser & Platform
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Screen Information
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Hardware Signals
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Language & Time Zone
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Privacy Permissions
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Tracking Signals
+                    </div>
+
+                </div>
+
+
+                <!-- ONE BROWSER BUTTON ONLY -->
+
+                <a
+                    href="/browser-scan"
+                    class="tool-button browser-button"
+                >
+                    🌐 SCAN MY BROWSER
+                </a>
+
+            </article>
+
+
+            <!-- =====================
+                 WEBSITE SCANNER
+             ====================== -->
+
+            <article class="tool-card website-card">
+
+                <div class="tool-icon website-icon">
+                    🌐
+                </div>
+
+                <div class="tool-label website-label">
+                    WEBSITE PRIVACY SCANNER
+                </div>
+
+                <h3>
+                    See what a website publicly exposes.
+                </h3>
+
+                <p class="tool-description">
+
+                    Inspect publicly observable privacy and security signals
+                    returned by any public website, including HTTPS usage,
+                    security headers, cookies and tracking indicators.
+
+                </p>
+
+                <div class="features">
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        HTTPS Check
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Security Headers
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Cookie Attributes
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Third-Party Domains
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Tracking Indicators
+                    </div>
+
+                    <div class="feature">
+                        <span class="check">●</span>
+                        Exposure Score
+                    </div>
+
+                </div>
+
+                <!-- ONE WEBSITE BUTTON ONLY -->
+
+                <a
+                    href="/website-scan"
+                    class="tool-button website-button"
+                >
+                    🌐 SCAN A WEBSITE
+                </a>
+
+            </article>
+
+        </div>
+
+
+        <div class="privacy-note">
+
+            🔒 Digital Tattoo is a privacy-awareness project designed
+            to demonstrate information that digital files, browsers
+            and websites may expose.
+
+        </div>
+
+    </section>
+
+
+</body>
+</html>

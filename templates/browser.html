@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Tattoo | Browser Privacy Scanner</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(231, 154, 88, 0.08), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(185, 111, 54, 0.05), transparent 30%),
+                #101214;
+            color: #f5f2eb;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        .navbar {
+            background: rgba(16, 18, 20, 0.97);
+            border-bottom: 1px solid rgba(231, 154, 88, 0.18);
+            padding: 17px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .brand img {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 10px;
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(231, 154, 88, 0.25));
+        }
+
+        .brand span {
+            color: #ffffff;
+        }
+
+        .brand .tattoo {
+            color: #e79a58;
+        }
+
+        .scanner-status {
+            color: #b9b8b3;
+            font-size: 13px;
+        }
+
+        .scanner-status strong {
+            color: #65df9b;
+        }
+
+
+        /* =========================
+           MAIN PAGE
+        ========================== */
+
+        .page {
+            width: min(1100px, 92%);
+            margin: 45px auto 70px;
+        }
+
+        .page-heading {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid #e79a58;
+            border-radius: 999px;
+            color: #ffb56f;
+            background: rgba(231, 154, 88, 0.07);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            margin-bottom: 15px;
+        }
+
+        .page-heading h1 {
+            font-size: 38px;
+            margin-bottom: 9px;
+        }
+
+        .page-heading p {
+            color: #b9b8b3;
+            line-height: 1.6;
+            max-width: 900px;
+        }
+
+
+        /* =========================
+           SCAN PANEL (BEFORE SCAN)
+        ========================== */
+
+        .scan-panel {
+            position: relative;
+
+            padding: 32px;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(33, 37, 40, 0.96),
+                    rgba(22, 25, 27, 0.98)
+                );
+
+            border: 1px solid rgba(231, 154, 88, 0.24);
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+            overflow: hidden;
+        }
+
+        .scan-panel::before {
+            content: "";
+
+            position: absolute;
+
+            width: 170px;
+            height: 170px;
+
+            background: #e79a58;
+
+            filter: blur(100px);
+
+            opacity: 0.13;
+
+            top: -70px;
+            right: -50px;
+        }
+
+        .scan-panel h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .scan-panel > p {
+            color: #c8c4bc;
+            line-height: 1.7;
+            max-width: 780px;
+            margin-bottom: 20px;
+        }
+
+        .scan-button {
+            width: 100%;
+            max-width: 420px;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 13px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            letter-spacing: 0.5px;
+
+            font-family: inherit;
+
+            color: #26160b;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffb56f,
+                    #e79a58
+                );
+
+            box-shadow:
+                0 10px 30px rgba(231, 154, 88, 0.20);
+
+            transition: 0.25s;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 14px 35px rgba(231, 154, 88, 0.30);
+        }
+
+        .scan-button:disabled {
+            opacity: 0.6;
+            cursor: progress;
+            transform: none;
+        }
+
+        .scan-note {
+            margin-top: 15px;
+
+            color: #a7a49e;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        .scan-note span {
+            color: #f0a35e;
+        }
+
+
+        /* =========================
+           PRIVACY SCORE (EXPOSURE)
+        ========================== */
+
+        .score-card {
+            background: linear-gradient(
+                135deg,
+                rgba(31, 35, 38, 0.98),
+                rgba(20, 23, 25, 0.98)
+            );
+
+            border: 1px solid rgba(231, 154, 88, 0.20);
+            border-radius: 22px;
+            padding: 30px;
+            margin-bottom: 25px;
+
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 210px 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .score-circle {
+            width: 185px;
+            height: 185px;
+            border-radius: 50%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            background: #171b1e;
+
+            border: 7px solid #e79a58;
+
+            box-shadow:
+                0 0 30px rgba(231, 154, 88, 0.15),
+                inset 0 0 25px rgba(231, 154, 88, 0.05);
+
+            padding: 14px;
+        }
+
+        /* Exposure circle colours */
+
+        .level-low {
+            border-color: #65df9b;
+            box-shadow:
+                0 0 30px rgba(82, 227, 157, 0.18),
+                inset 0 0 25px rgba(82, 227, 157, 0.06);
+        }
+
+        .level-medium {
+            border-color: #f0a35e;
+            box-shadow:
+                0 0 30px rgba(255, 178, 74, 0.18),
+                inset 0 0 25px rgba(255, 178, 74, 0.06);
+        }
+
+        .level-high {
+            border-color: #ff6f61;
+            box-shadow:
+                0 0 30px rgba(255, 141, 141, 0.18),
+                inset 0 0 25px rgba(255, 141, 141, 0.06);
+        }
+
+        .score-number {
+            font-size: 30px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .score-out-of {
+            color: #aaa7a1;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.4px;
+        }
+
+        .score-content h2 {
+            font-size: 18px;
+            color: #c8c4bc;
+            margin-bottom: 10px;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 15px;
+            border-radius: 999px;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .high {
+            color: #ff6f61;
+            background: rgba(255, 73, 73, 0.12);
+            border: 1px solid rgba(255, 83, 83, 0.35);
+        }
+
+        .medium {
+            color: #f0a35e;
+            background: rgba(255, 166, 49, 0.12);
+            border: 1px solid rgba(255, 166, 49, 0.35);
+        }
+
+        .low {
+            color: #65df9b;
+            background: rgba(52, 222, 139, 0.11);
+            border: 1px solid rgba(52, 222, 139, 0.35);
+        }
+
+        .score-message {
+            color: #d4d0c8;
+            line-height: 1.7;
+            max-width: 650px;
+        }
+
+        .score-meta {
+            margin-top: 12px;
+
+            color: #aaa7a1;
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        .assessment-note {
+            margin-top: 14px;
+            padding: 11px;
+            border-radius: 10px;
+            background: rgba(231, 154, 88, 0.06);
+            border: 1px solid rgba(231, 154, 88, 0.16);
+            font-size: 12px;
+            color: #b9b8b3;
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           CATEGORY BANNERS
+        ========================== */
+
+        .category-note {
+            margin: 0 0 18px;
+            padding: 15px 18px;
+            border-radius: 14px;
+
+            background: rgba(27, 30, 32, 0.82);
+            border: 1px solid rgba(231, 154, 88, 0.14);
+
+            color: #c8c4bc;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .category-note strong {
+            color: #ffb56f;
+        }
+
+        .category-note.locked {
+            background: rgba(255, 178, 74, 0.05);
+            border-color: rgba(255, 178, 74, 0.18);
+        }
+
+        .category-note.locked strong {
+            color: #f0a35e;
+        }
+
+
+        /* =========================
+           SECTION TITLES + CARDS
+        ========================== */
+
+        .section-title {
+            margin: 35px 0 16px;
+            font-size: 22px;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .metadata-card {
+            background: rgba(27, 30, 32, 0.96);
+            border: 1px solid rgba(231, 154, 88, 0.16);
+            border-radius: 18px;
+            padding: 22px;
+            min-height: 200px;
+            transition: 0.25s ease;
+        }
+
+        .metadata-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(231, 154, 88, 0.38);
+        }
+
+        .metadata-card.wide {
+            grid-column: 1 / -1;
+            min-height: 0;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(231, 154, 88, 0.10);
+
+            margin-bottom: 15px;
+            font-size: 21px;
+        }
+
+        .metadata-card h3 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .card-hint {
+            color: #92908b;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .metadata-card p {
+            color: #cbc7bf;
+            line-height: 1.6;
+            margin: 8px 0;
+            overflow-wrap: anywhere;
+        }
+
+
+        /* =========================
+           KEY / VALUE ROWS
+        ========================== */
+
+        .card-rows {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+
+            gap: 16px;
+
+            padding: 9px 0;
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .meta-row:last-child {
+            border-bottom: none;
+        }
+
+        .meta-row-label {
+            color: #b9b8b3;
+            font-size: 13px;
+            flex: 1 1 auto;
+        }
+
+        .meta-row-value {
+            font-size: 13px;
+            font-weight: 700;
+            text-align: right;
+            flex: 0 1 auto;
+            max-width: 62%;
+            overflow-wrap: anywhere;
+        }
+
+        .value-ok {
+            color: #65df9b;
+        }
+
+        .value-warn {
+            color: #f0a35e;
+        }
+
+        .value-na {
+            color: #92908b;
+            font-weight: 600;
+        }
+
+
+        /* =========================
+           PERMISSIONS
+        ========================== */
+
+        .permission-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 4px;
+        }
+
+        .permission-item {
+            padding: 16px;
+            border-radius: 14px;
+
+            background: rgba(19, 22, 24, 0.72);
+
+            border: 1px solid rgba(231, 154, 88, 0.13);
+        }
+
+        .permission-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 6px;
+        }
+
+        .permission-name {
+            color: #f5f2eb;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .permission-desc {
+            color: #aaa7a1;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .permission-badge {
+            display: inline-block;
+            padding: 5px 11px;
+            border-radius: 999px;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .perm-granted {
+            color: #f0a35e;
+            background: rgba(255, 166, 49, 0.12);
+            border: 1px solid rgba(255, 166, 49, 0.35);
+        }
+
+        .perm-denied {
+            color: #65df9b;
+            background: rgba(52, 222, 139, 0.11);
+            border: 1px solid rgba(52, 222, 139, 0.35);
+        }
+
+        .perm-prompt {
+            color: #ffb56f;
+            background: rgba(231, 154, 88, 0.10);
+            border: 1px solid rgba(231, 154, 88, 0.35);
+        }
+
+        .perm-unknown {
+            color: #b9b8b3;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+
+        /* =========================
+           FINGERPRINT CARD
+        ========================== */
+
+        .fingerprint-card {
+            margin-top: 18px;
+
+            padding: 26px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(231, 154, 88, 0.08),
+                    rgba(27, 30, 32, 0.96)
+                );
+
+            border: 1px solid rgba(231, 154, 88, 0.20);
+        }
+
+        .fingerprint-card h3 {
+            font-size: 19px;
+            margin-bottom: 10px;
+        }
+
+        .fingerprint-card p {
+            color: #c5c1b9;
+            line-height: 1.7;
+        }
+
+        .fingerprint-points {
+            margin-top: 14px;
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .fp-chip {
+            padding: 7px 12px;
+            border-radius: 999px;
+
+            background: rgba(0, 217, 255, 0.07);
+            border: 1px solid rgba(231, 154, 88, 0.20);
+
+            color: #8fd8ea;
+            font-size: 12px;
+        }
+
+
+        /* =========================
+           BREAKDOWN
+        ========================== */
+
+        .breakdown {
+            background: rgba(27, 30, 32, 0.96);
+            border: 1px solid rgba(231, 154, 88, 0.16);
+            border-radius: 18px;
+            padding: 25px 28px;
+            margin-top: 25px;
+        }
+
+        .breakdown h2 {
+            margin-bottom: 6px;
+            font-size: 23px;
+        }
+
+        .breakdown-intro {
+            color: #aaa7a1;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            min-height: 58px;
+
+            padding: 12px 4px;
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            gap: 30px;
+        }
+
+        .score-row:last-child {
+            border-bottom: none;
+        }
+
+        .score-label {
+            flex: 1;
+            color: #f5f2eb;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .score-detail {
+            display: block;
+
+            color: #92908b;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .score-result {
+            min-width: 150px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .detected-score {
+            color: #f0a35e;
+        }
+
+        .safe-score {
+            color: #65df9b;
+        }
+
+        .score-total-row {
+            margin-top: 10px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(231, 154, 88, 0.28);
+            border-bottom: none;
+        }
+
+        .score-total-row .score-result {
+            color: #ffb56f;
+            font-size: 18px;
+        }
+
+        .neutral-score {
+            color: #aaa7a1;
+        }
+
+
+        /* =========================
+           ACTION SECTION
+        ========================== */
+
+        .action-card {
+            margin-top: 25px;
+            padding: 27px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(231, 154, 88, 0.08),
+                    rgba(27, 30, 32, 0.96)
+                );
+
+            border: 1px solid rgba(231, 154, 88, 0.20);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 25px;
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-text h2 {
+            margin-bottom: 8px;
+            font-size: 19px;
+        }
+
+        .action-text p {
+            color: #c5c1b9;
+            line-height: 1.7;
+        }
+
+        .action-text ul {
+            margin: 12px 0 0 18px;
+
+            color: #c5c1b9;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .clean-action-btn {
+            border: none;
+
+            min-width: 235px;
+
+            padding: 16px 22px;
+
+            border-radius: 12px;
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-size: 14px;
+            font-weight: 900;
+
+            letter-spacing: 0.5px;
+
+            color: #26160b;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #e79a58,
+                    #ffb56f
+                );
+
+            box-shadow:
+                0 10px 28px
+                rgba(231, 154, 88, 0.18);
+
+            transition: 0.2s;
+        }
+
+        .clean-action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .secondary-action-btn {
+            background: rgba(231, 154, 88, 0.10);
+            border: 1px solid rgba(231, 154, 88, 0.40);
+            color: #ffb56f;
+        }
+
+        .secondary-action-btn:hover {
+            background: rgba(231, 154, 88, 0.16);
+        }
+
+        .actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 25px;
+        }
+
+        .scan-again {
+            display: inline-block;
+            margin-top: 25px;
+            color: #ffb56f;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .scan-again:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 900px) {
+            .metadata-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 800px) {
+
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-circle {
+                margin: auto;
+            }
+
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .permission-list {
+                grid-template-columns: 1fr;
+            }
+
+            .action-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .clean-action-btn {
+                width: 100%;
+            }
+
+            .scanner-status {
+                display: none;
+            }
+
+            .score-row {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .score-result {
+                min-width: 110px;
+            }
+
+            .page-heading h1 {
+                font-size: 30px;
+            }
+
+            .meta-row {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .meta-row-value {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <img
+                src="{{ url_for('static', filename='images/digital-tattoo-logo.jpeg') }}"
+                alt="Digital Tattoo Logo"
+            >
+
+            <span>
+                Digital <span class="tattoo">Tattoo</span>
+            </span>
+
+        </div>
+
+        <div class="scanner-status">
+            <strong>●</strong> Local Browser Analysis
+        </div>
+
+    </nav>
+
+
+    <main class="page">
+
+
+        <!-- =========================
+             PAGE HEADING
+        ========================== -->
+
+        <section class="page-heading">
+
+            <div class="eyebrow">
+                BROWSER PRIVACY SCANNER
+            </div>
+
+            <h1>🌐 Browser Privacy Scan</h1>
+
+            <p>
+                Digital Tattoo can also show you what your own web browser
+                reveals to the websites you visit. This educational scan runs
+                entirely inside your browser using standard browser APIs and is
+                never a virus, malware check or security breach test.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             SCAN PANEL
+        ========================== -->
+
+        <section class="scan-panel">
+
+            <h2>🧬 What does your browser reveal?</h2>
+
+            <p>
+                When you click the button below, this page reads only the
+                information a normal website is allowed to read from your
+                browser, such as your browser name, screen size, language,
+                time zone and hardware hints. It also reports the current
+                <strong style="color:#ffb56f;">permission status</strong> for
+                location, camera, microphone and notifications.
+            </p>
+
+            <p style="margin-bottom:22px;">
+                Digital Tattoo does not switch on your camera or microphone,
+                does not request your GPS coordinates, does not save a
+                persistent fingerprint, and does not send any of this
+                information to a third party.
+            </p>
+
+            <button
+                class="scan-button"
+                id="scanButton"
+                type="button"
+                onclick="runBrowserScan()"
+            >
+                🔍 SCAN MY BROWSER
+            </button>
+
+            <div class="scan-note">
+                <span>🔒</span>
+                Browser analysis is performed locally in your browser.
+                Nothing is uploaded to the Digital Tattoo Flask server.
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RESULTS (hidden until scanned)
+        ========================== -->
+
+        <div id="results" class="hidden" aria-live="polite">
+
+
+            <!-- ======= EXPOSURE SUMMARY ======= -->
+
+            <h2 class="section-title">
+                Browser Privacy Exposure
+            </h2>
+
+            <section class="score-card">
+
+                <div class="score-grid">
+
+                    <div class="score-circle" id="exposureCircle">
+
+                        <div class="score-number" id="exposureWord">
+                            —
+                        </div>
+
+                        <div class="score-out-of">
+                            EXPOSURE LEVEL
+                        </div>
+
+                    </div>
+
+
+                    <div class="score-content">
+
+                        <h2>Digital Tattoo Privacy-Awareness Assessment</h2>
+
+                        <div class="risk-badge low" id="exposureBadge">
+                            ⏳ ANALYSING
+                        </div>
+
+                        <p class="score-message" id="exposureMessage">
+                            Reading browser characteristics...
+                        </p>
+
+                        <p class="score-meta" id="exposureMeta"></p>
+
+                        <div class="assessment-note">
+                            This is a <strong>Digital Tattoo privacy-awareness
+                            assessment</strong>, not an industry-standard
+                            cybersecurity score. Normal browser information is
+                            not malware and is not a security breach — modern
+                            browsers share much of this data with every site
+                            you visit.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ======= CATEGORY A ======= -->
+
+            <h2 class="section-title">
+                A) Automatically Detectable
+            </h2>
+
+            <div class="category-note">
+                <strong>What a website normally sees.</strong>
+                Every value in the cards below was read from standard
+                browser APIs. No permission prompt was shown and nothing
+                sensitive was activated.
+            </div>
+
+            <section class="metadata-grid">
+
+
+                <!-- BROWSER INFORMATION -->
+
+                <div class="metadata-card">
+
+                    <div class="card-icon">🌐</div>
+
+                    <h3>Browser Information</h3>
+
+                    <div class="card-hint">
+                        Normally readable by any website, with no permission.
+                    </div>
+
+                    <div class="card-rows" id="rowsBrowser"></div>
+
+                </div>
+
+
+                <!-- DEVICE / PLATFORM -->
+
+                <div class="metadata-card">
+
+                    <div class="card-icon">💻</div>
+
+                    <h3>Device / Platform</h3>
+
+                    <div class="card-hint">
+                        Operating-system hints the browser chooses to expose.
+                    </div>
+
+                    <div class="card-rows" id="rowsPlatform"></div>
+
+                </div>
+
+
+                <!-- SCREEN -->
+
+                <div class="metadata-card">
+
+                    <div class="card-icon">🖥</div>
+
+                    <h3>Screen Information</h3>
+
+                    <div class="card-hint">
+                        Display geometry that helps describe your setup.
+                    </div>
+
+                    <div class="card-rows" id="rowsScreen"></div>
+
+                </div>
+
+
+                <!-- LANGUAGE & TIME ZONE -->
+
+                <div class="metadata-card">
+
+                    <div class="card-icon">🗣</div>
+
+                    <h3>Language &amp; Time Zone</h3>
+
+                    <div class="card-hint">
+                        Often hints at your region and rough location.
+                    </div>
+
+                    <div class="card-rows" id="rowsLocale"></div>
+
+                </div>
+
+
+                <!-- BROWSER SETTINGS -->
+
+                <div class="metadata-card">
+
+                    <div class="card-icon">🍪</div>
+
+                    <h3>Browser Settings</h3>
+
+                    <div class="card-hint">
+                        Cookies, connection state and tracking preference.
+                    </div>
+
+                    <div class="card-rows" id="rowsSettings"></div>
+
+                </div>
+
+
+                <!-- HARDWARE / INPUT -->
+
+                <div class="metadata-card">
+
+                    <div class="card-icon">👆</div>
+
+                    <h3>Hardware / Input Information</h3>
+
+                    <div class="card-hint">
+                        Coarse hardware and input capability hints.
+                    </div>
+
+                    <div class="card-rows" id="rowsHardware"></div>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- ======= CATEGORY B ======= -->
+
+            <h2 class="section-title">
+                B) Permission-Controlled
+            </h2>
+
+            <div class="category-note locked">
+                <strong>Protected by your browser.</strong>
+                Precise location, camera, microphone and notifications cannot
+                be used by a website unless you allow them. Digital Tattoo
+                only <strong>read the permission status</strong> below — it did
+                <strong>not</strong> request access and did not activate any of
+                these resources.
+            </div>
+
+            <section class="metadata-grid">
+
+                <div class="metadata-card wide">
+
+                    <div class="card-icon">🔐</div>
+
+                    <h3>Permission-Controlled Access</h3>
+
+                    <div class="card-hint">
+                        Checking a status is not the same as accessing the
+                        resource. Reading these states never opens a prompt
+                        and never starts your camera, microphone or GPS.
+                    </div>
+
+                    <div class="permission-list" id="permissionList"></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ======= FINGERPRINT AWARENESS ======= -->
+
+            <section class="fingerprint-card">
+
+                <h3>🧬 Browser Fingerprinting</h3>
+
+                <p>
+                    Individual browser characteristics may seem harmless, but
+                    combinations of properties such as screen size, language,
+                    time zone, hardware information and browser configuration
+                    can contribute to a browser fingerprint. Digital Tattoo
+                    shows you which of these building blocks your browser
+                    reveals; it does not combine, hash or store them to
+                    identify or track you, and it makes no claim about any
+                    other website's behaviour. This card is for privacy
+                    awareness only.
+                </p>
+
+                <div class="fingerprint-points">
+                    <span class="fp-chip">Screen size</span>
+                    <span class="fp-chip">Pixel ratio</span>
+                    <span class="fp-chip">Language</span>
+                    <span class="fp-chip">Time zone</span>
+                    <span class="fp-chip">CPU cores</span>
+                    <span class="fp-chip">Approx. device memory</span>
+                    <span class="fp-chip">User agent</span>
+                    <span class="fp-chip">Touch support</span>
+                </div>
+
+            </section>
+
+
+            <!-- ======= WHY THIS LEVEL ======= -->
+
+            <section class="breakdown">
+
+                <h2>🧮 Why this exposure level?</h2>
+
+                <p class="breakdown-intro">
+                    The exposure level is based on how many of the 8 browser-information categories tested by Digital Tattoo returned at least one value to this page without asking for permission. HIGH means 6–8 categories, MEDIUM means 4–5, and LOW means 0–3. This is a privacy-awareness classification, not a cybersecurity score. Permission-controlled resources are shown separately.
+                </p>
+
+                <div id="breakdownRows"></div>
+
+            </section>
+
+
+            <!-- ======= REDUCE EXPOSURE ======= -->
+
+            <section class="action-card">
+                <div class="action-text">
+                    <h2>🛡️ How can I reduce browser exposure?</h2>
+                    <p>Different browsers expose different amounts of information. You can reduce unnecessary exposure without expecting every value to disappear.</p>
+                    <ul>
+                        <li>Review and remove website permissions you no longer need.</li>
+                        <li>Block third-party cookies or use your browser's stronger tracking protection.</li>
+                        <li>Keep your browser updated so current privacy protections are available.</li>
+                        <li>Use privacy-focused browser settings or anti-fingerprinting features where available.</li>
+                        <li>Remember: “Not available” can simply mean this browser chose not to expose that API value.</li>
+                    </ul>
+                </div>
+            </section>
+
+
+            <!-- ======= LOCAL PROCESSING ======= -->
+
+            <section class="action-card">
+
+                <div class="action-text">
+
+                    <h2>🔒 Processed locally in your browser</h2>
+
+                    <p>
+                        Browser analysis is performed locally in your browser.
+                        Every value above was read by JavaScript running on this
+                        page and displayed directly on this page.
+                    </p>
+
+                    <ul>
+                        <li>No browser data is sent to the Flask backend or any third party.</li>
+                        <li>No fingerprint is stored in cookies, localStorage or sessionStorage.</li>
+                        <li>No camera, microphone or GPS access is requested.</li>
+                        <li>No external tracking or analytics scripts are loaded.</li>
+                        <li>Closing or refreshing this page discards the whole report.</li>
+                    </ul>
+
+                    <p style="margin-top:14px;">
+                        Note that Digital Tattoo cannot control what other
+                        websites you visit may collect, and a browser may
+                        still share some of this information with those sites.
+                    </p>
+
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:12px;">
+
+                    <button
+                        class="clean-action-btn"
+                        id="rescanButton"
+                        type="button"
+                        onclick="runBrowserScan()"
+                    >
+                        🔄 RE-SCAN MY BROWSER
+                    </button>
+
+                    <a
+                        class="clean-action-btn secondary-action-btn"
+                        href="/"
+                        style="text-align:center; text-decoration:none; display:block;"
+                    >
+                        📷 PHOTO PRIVACY SCANNER
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <a class="scan-again" href="/">
+                ← Back to Digital Tattoo Home
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         BROWSER SCANNER SCRIPT
+    ========================== -->
+
+    <script>
+
+        /* =====================================================
+           Digital Tattoo - Browser Privacy Scanner
+           Client-side only. No backend calls, no storage,
+           no permission requests.
+        ===================================================== */
+
+        var NOT_AVAILABLE = "Not available";
+
+
+        /* ---------- SAFE READ HELPERS ---------- */
+
+        function readValue(label, group, getter) {
+
+            var text;
+
+            try {
+                text = getter();
+            }
+            catch (error) {
+                text = null;
+            }
+
+            if (text === null || text === undefined) {
+                return {
+                    label: label,
+                    group: group,
+                    value: NOT_AVAILABLE,
+                    available: false,
+                    warn: false
+                };
+            }
+
+            text = String(text);
+
+            if (text.trim() === "") {
+                return {
+                    label: label,
+                    group: group,
+                    value: NOT_AVAILABLE,
+                    available: false,
+                    warn: false
+                };
+            }
+
+            return {
+                label: label,
+                group: group,
+                value: text,
+                available: true,
+                warn: false
+            };
+        }
+
+
+        function readToggle(label, group, getter, onText, offText) {
+
+            var raw;
+
+            try {
+                raw = getter();
+            }
+            catch (error) {
+                raw = null;
+            }
+
+            if (raw === null || raw === undefined) {
+                return {
+                    label: label,
+                    group: group,
+                    value: NOT_AVAILABLE,
+                    available: false,
+                    warn: false,
+                    raw: null
+                };
+            }
+
+            if (raw === "unsupported") {
+                return {
+                    label: label,
+                    group: group,
+                    value: NOT_AVAILABLE,
+                    available: false,
+                    warn: false,
+                    raw: null
+                };
+            }
+
+            raw = Boolean(raw);
+
+            return {
+                label: label,
+                group: group,
+                value: raw ? onText : offText,
+                available: true,
+                warn: false,
+                raw: raw
+            };
+        }
+
+
+        function readWarnValue(label, group, getter, okText, warnText) {
+
+            var item = readValue(label, group, getter);
+
+            if (item.available) {
+                item.warn = true;
+                item.value = warnText || item.value;
+            }
+
+            return item;
+        }
+
+
+        /* ---------- PERMISSION DEFINITIONS ---------- */
+
+        var PERMISSIONS = [
+            {
+                key: "geolocation",
+                icon: "📍",
+                name: "Location",
+                desc: "Precise GPS coordinates"
+            },
+            {
+                key: "camera",
+                icon: "📷",
+                name: "Camera",
+                desc: "Camera image or video capture"
+            },
+            {
+                key: "microphone",
+                icon: "🎙",
+                name: "Microphone",
+                desc: "Microphone audio capture"
+            },
+            {
+                key: "notifications",
+                icon: "🔔",
+                name: "Notifications",
+                desc: "Desktop or push notifications"
+            }
+        ];
+
+
+        /*
+            Only reads the STATUS of a permission.
+            navigator.permissions.query() does NOT trigger a prompt
+            and never starts the underlying hardware.
+        */
+
+        function readPermissionStatus(permissionKey) {
+
+            if (
+                !navigator.permissions ||
+                typeof navigator.permissions.query !== "function"
+            ) {
+                return Promise.resolve({
+                    state: "unavailable",
+                    label: "Permission status unavailable"
+                });
+            }
+
+            var options = {};
+
+            try {
+                options = { name: permissionKey };
+            }
+            catch (error) {
+                options = {};
+            }
+
+            return new Promise(function (resolve) {
+
+                var settled = false;
+
+                function finish(result) {
+                    if (!settled) {
+                        settled = true;
+                        resolve(result);
+                    }
+                }
+
+                try {
+
+                    var query = navigator.permissions.query(options);
+
+                    var timer = setTimeout(function () {
+                        finish({
+                            state: "unsupported",
+                            label: "Unsupported / Unable to determine"
+                        });
+                    }, 3000);
+
+                    query.then(function (status) {
+
+                        clearTimeout(timer);
+
+                        if (!status) {
+                            finish({
+                                state: "unsupported",
+                                label: "Unsupported / Unable to determine"
+                            });
+                            return;
+                        }
+
+                        if (status.state === "granted") {
+                            finish({ state: "granted", label: "Granted" });
+                        }
+                        else if (status.state === "denied") {
+                            finish({ state: "denied", label: "Denied" });
+                        }
+                        else {
+                            finish({
+                                state: "prompt",
+                                label: "Not granted / Prompt"
+                            });
+                        }
+
+                    }).catch(function () {
+                        clearTimeout(timer);
+                        finish({
+                            state: "unsupported",
+                            label: "Unsupported / Unable to determine"
+                        });
+                    });
+
+                }
+                catch (error) {
+                    finish({
+                        state: "unsupported",
+                        label: "Unsupported / Unable to determine"
+                    });
+                }
+
+            });
+        }
+
+
+        /* ---------- COLLECT EVERY READABLE VALUE ---------- */
+
+        function collectBrowserData() {
+
+            var nav = navigator;
+            var rows = [];
+            var uad = null;
+
+            try {
+                uad = nav.userAgentData || null;
+            }
+            catch (error) {
+                uad = null;
+            }
+
+
+            /* --- Browser Information --- */
+
+            rows.push({
+                target: "browser",
+                data: [
+                    readValue("User agent", "id", function () {
+                        return nav.userAgent;
+                    }),
+                    readValue("Browser brand (Client Hints)", "id", function () {
+                        if (!uad || !uad.brands) {
+                            return null;
+                        }
+                        return uad.brands.map(function (brand) {
+                            return brand.brand + " " + brand.version;
+                        }).join(" / ");
+                    }),
+                    readValue("Vendor", "id", function () {
+                        return nav.vendor;
+                    })
+                ]
+            });
+
+
+            /* --- Device / Platform --- */
+
+            rows.push({
+                target: "platform",
+                data: [
+                    readValue("Platform (raw API value)", "id", function () {
+                        return nav.platform;
+                    }),
+                    readValue("Platform (Client Hints)", "id", function () {
+                        if (!uad || !uad.platform) {
+                            return null;
+                        }
+                        return uad.platform;
+                    }),
+                    readValue("OS hint (oscpu)", "id", function () {
+                        return nav.oscpu;
+                    }),
+                    readToggle(
+                        "Reported as a mobile device",
+                        "id",
+                        function () {
+                            if (uad && typeof uad.mobile === "boolean") {
+                                return uad.mobile;
+                            }
+                            return "unsupported";
+                        },
+                        "Yes",
+                        "No"
+                    )
+                ]
+            });
+
+
+            /* --- Screen Information --- */
+
+            rows.push({
+                target: "screen",
+                data: [
+                    readValue("Screen resolution", "screen", function () {
+                        if (typeof screen.width !== "number" ||
+                            typeof screen.height !== "number") {
+                            return null;
+                        }
+                        return screen.width + " × " + screen.height +
+                            " (width × height, CSS pixels)";
+                    }),
+                    readValue("Available screen size", "screen", function () {
+                        if (typeof screen.availWidth !== "number" ||
+                            typeof screen.availHeight !== "number") {
+                            return null;
+                        }
+                        return screen.availWidth + " × " + screen.availHeight +
+                            " (minus OS taskbar / dock)";
+                    }),
+                    readValue("Device pixel ratio", "screen", function () {
+                        if (typeof window.devicePixelRatio !== "number") {
+                            return null;
+                        }
+                        return window.devicePixelRatio;
+                    }),
+                    readValue("Colour depth", "color", function () {
+                        if (typeof screen.colorDepth !== "number") {
+                            return null;
+                        }
+                        return screen.colorDepth + "-bit";
+                    }),
+                    readValue("Pixel depth", "color", function () {
+                        if (typeof screen.pixelDepth !== "number") {
+                            return null;
+                        }
+                        return screen.pixelDepth + "-bit";
+                    })
+                ]
+            });
+
+
+            /* --- Language & Time Zone --- */
+
+            rows.push({
+                target: "locale",
+                data: [
+                    readValue("Browser language", "locale", function () {
+                        return nav.language;
+                    }),
+                    readValue("Preferred languages", "locale", function () {
+                        if (!nav.languages || nav.languages.length === 0) {
+                            return null;
+                        }
+                        return nav.languages.join(", ");
+                    }),
+                    readValue("Time zone", "locale", function () {
+                        if (typeof Intl === "undefined" ||
+                            typeof Intl.DateTimeFormat !== "function") {
+                            return null;
+                        }
+                        return Intl.DateTimeFormat()
+                            .resolvedOptions().timeZone;
+                    }),
+                    readValue("UTC offset", "locale", function () {
+                        if (typeof Date.prototype.getTimezoneOffset !== "function") {
+                            return null;
+                        }
+
+                        var offset = new Date().getTimezoneOffset();
+
+                        if (offset === 0) {
+                            return "UTC+00:00";
+                        }
+
+                        var sign = offset > 0 ? "+" : "-";
+                        var absolute = Math.abs(offset);
+                        var hours = Math.floor(absolute / 60);
+                        var minutes = absolute % 60;
+
+                        function pad(number) {
+                            return number < 10 ? "0" + number : String(number);
+                        }
+
+                        return "UTC" + sign + pad(hours) + ":" + pad(minutes);
+                    })
+                ]
+            });
+
+
+            /* --- Browser Settings --- */
+
+            var dntRow = readValue("Do Not Track", "dnt", function () {
+                if (nav.doNotTrack === "1") {
+                    return "Enabled (1)";
+                }
+                if (nav.doNotTrack === "0") {
+                    return "Disabled (0)";
+                }
+                if (nav.msDoNotTrack === "1") {
+                    return "Enabled (1)";
+                }
+                if (nav.msDoNotTrack === "0") {
+                    return "Disabled (0)";
+                }
+                return null;
+            });
+
+            if (dntRow.available && dntRow.value === "Disabled (0)") {
+                dntRow.warn = true;
+            }
+
+            rows.push({
+                target: "settings",
+                data: [
+                    readToggle(
+                        "Cookies enabled",
+                        "cookies",
+                        function () {
+                            if (typeof nav.cookieEnabled !== "boolean") {
+                                return null;
+                            }
+                            return nav.cookieEnabled;
+                        },
+                        "Enabled",
+                        "Disabled"
+                    ),
+                    readToggle(
+                        "Connection status",
+                        "network",
+                        function () {
+                            if (typeof nav.onLine !== "boolean") {
+                                return null;
+                            }
+                            return nav.onLine;
+                        },
+                        "Online",
+                        "Offline"
+                    ),
+                    dntRow
+                ]
+            });
+
+
+            /* --- Hardware / Input --- */
+
+            rows.push({
+                target: "hardware",
+                data: [
+                    readValue("Logical CPU cores", "hardware", function () {
+                        if (typeof nav.hardwareConcurrency !== "number") {
+                            return null;
+                        }
+                        return nav.hardwareConcurrency;
+                    }),
+                    readValue("Approximate device memory", "hardware", function () {
+                        if (typeof nav.deviceMemory !== "number") {
+                            return null;
+                        }
+                        return nav.deviceMemory + " GB (rounded by the browser)";
+                    }),
+                    readValue("Touch support", "input", function () {
+                        if (typeof nav.maxTouchPoints !== "number") {
+                            return null;
+                        }
+                        if (nav.maxTouchPoints > 0) {
+                            return "Yes (" + nav.maxTouchPoints +
+                                " touch points)";
+                        }
+                        return "No (0 touch points)";
+                    })
+                ]
+            });
+
+
+            return rows;
+        }
+
+
+        /* ---------- RENDERING ---------- */
+
+        function renderRows(containerId, data) {
+
+            var container = document.getElementById(containerId);
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            for (var i = 0; i < data.length; i++) {
+
+                var item = data[i];
+                var row = document.createElement("div");
+
+                row.className = "meta-row";
+
+                var label = document.createElement("span");
+                label.className = "meta-row-label";
+                label.textContent = item.label;
+
+                var value = document.createElement("span");
+
+                if (!item.available) {
+                    value.className = "meta-row-value value-na";
+                }
+                else if (item.warn) {
+                    value.className = "meta-row-value value-warn";
+                }
+                else {
+                    value.className = "meta-row-value value-ok";
+                }
+
+                value.textContent = item.value;
+
+                row.appendChild(label);
+                row.appendChild(value);
+
+                container.appendChild(row);
+            }
+        }
+
+
+        function renderPermissions(statuses) {
+
+            var container = document.getElementById("permissionList");
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            for (var i = 0; i < PERMISSIONS.length; i++) {
+
+                var definition = PERMISSIONS[i];
+                var status = statuses[i];
+
+                var item = document.createElement("div");
+                item.className = "permission-item";
+
+                var top = document.createElement("div");
+                top.className = "permission-top";
+
+                var name = document.createElement("div");
+                name.className = "permission-name";
+                name.textContent = definition.icon + " " + definition.name;
+
+                var badge = document.createElement("span");
+                badge.className = "permission-badge";
+
+                if (status.state === "granted") {
+                    badge.classList.add("perm-granted");
+                }
+                else if (status.state === "denied") {
+                    badge.classList.add("perm-denied");
+                }
+                else if (status.state === "prompt") {
+                    badge.classList.add("perm-prompt");
+                }
+                else {
+                    badge.classList.add("perm-unknown");
+                }
+
+                badge.textContent = status.label;
+
+                var desc = document.createElement("div");
+                desc.className = "permission-desc";
+                desc.textContent = definition.desc;
+
+                top.appendChild(name);
+                top.appendChild(badge);
+
+                item.appendChild(top);
+                item.appendChild(desc);
+
+                container.appendChild(item);
+            }
+        }
+
+
+        /* ---------- EXPOSURE ASSESSMENT ---------- */
+
+        var GROUPS = [
+            { key: "id", label: "Browser identification" },
+            { key: "locale", label: "Language & region" },
+            { key: "screen", label: "Screen information" },
+            { key: "color", label: "Colour information" },
+            { key: "hardware", label: "Hardware hints" },
+            { key: "input", label: "Input capability" },
+            { key: "cookies", label: "Cookie setting" },
+            { key: "network", label: "Connection status" }
+        ];
+
+        /*
+           This is deliberately NOT a cybersecurity score.
+           We simply count how many tested browser-information categories
+           returned at least one value to this page without a permission prompt.
+        */
+        function buildAssessment(allRows, statuses, dntRow) {
+            var flat = [];
+            var breakdown = [];
+            var exposedCategories = 0;
+            var fullyVisible = 0;
+            var partiallyVisible = 0;
+            var hiddenCategories = 0;
+            var availableCount = 0;
+            var granted = 0;
+
+            for (var i = 0; i < allRows.length; i++) {
+                for (var j = 0; j < allRows[i].data.length; j++) {
+                    flat.push(allRows[i].data[j]);
+                    if (allRows[i].data[j].available) availableCount++;
+                }
+            }
+
+            for (var g = 0; g < GROUPS.length; g++) {
+                var group = GROUPS[g];
+                var members = [];
+                var available = [];
+
+                for (var f = 0; f < flat.length; f++) {
+                    if (flat[f].group === group.key) {
+                        members.push(flat[f]);
+                        if (flat[f].available) available.push(flat[f]);
+                    }
+                }
+
+                var state, resultText, detail;
+                if (available.length === 0) {
+                    state = "none";
+                    resultText = "Not exposed";
+                    detail = "No tested value in this category was returned by this browser.";
+                    hiddenCategories++;
+                } else if (members.length > 0 && available.length < members.length) {
+                    state = "partial";
+                    resultText = "Partially visible";
+                    detail = available.length + " of " + members.length + " tested values were returned.";
+                    exposedCategories++;
+                    partiallyVisible++;
+                } else {
+                    state = "detected";
+                    resultText = "Visible";
+                    detail = available.length + " tested value" + (available.length === 1 ? " was" : "s were") + " returned.";
+                    exposedCategories++;
+                    fullyVisible++;
+                }
+
+                breakdown.push({
+                    label: group.label,
+                    state: state,
+                    points: resultText,
+                    detail: detail
+                });
+            }
+
+            for (var p = 0; p < statuses.length; p++) {
+                var definition = PERMISSIONS[p];
+                var status = statuses[p];
+                if (status.state === "granted") granted++;
+
+                breakdown.push({
+                    label: "Permission status — " + definition.name,
+                    state: status.state === "granted" ? "warn" : "safe",
+                    points: "Not part of exposure level",
+                    detail: status.label
+                });
+            }
+
+            if (dntRow) {
+                breakdown.push({
+                    label: "Do Not Track preference",
+                    state: "safe",
+                    points: "Not part of exposure level",
+                    detail: dntRow.value
+                });
+            }
+
+            var ratio = exposedCategories / GROUPS.length;
+            var level, levelWord, badgeText, message;
+
+            if (ratio >= 0.75) {
+                level = "high";
+                levelWord = "HIGH";
+                badgeText = "🔴 HIGH BROWSER EXPOSURE";
+                message = "Most of the browser-information categories tested by Digital Tattoo are visible to this page without a permission prompt. This is common in modern browsers and does not mean your device has been hacked. The combination of several characteristics can, however, contribute to browser fingerprinting.";
+            } else if (ratio >= 0.40) {
+                level = "medium";
+                levelWord = "MEDIUM";
+                badgeText = "🟠 MEDIUM BROWSER EXPOSURE";
+                message = "Some of the browser-information categories tested by Digital Tattoo are visible to this page, while others are limited or unavailable.";
+            } else {
+                level = "low";
+                levelWord = "LOW";
+                badgeText = "🟢 LOW BROWSER EXPOSURE";
+                message = "Only a small number of the browser-information categories tested by Digital Tattoo returned values to this page.";
+            }
+
+            return {
+                breakdown: breakdown,
+                level: level,
+                levelWord: levelWord,
+                badgeText: badgeText,
+                message: message,
+                exposedCategories: exposedCategories,
+                totalCategories: GROUPS.length,
+                fullyVisible: fullyVisible,
+                partiallyVisible: partiallyVisible,
+                hiddenCategories: hiddenCategories,
+                availableCount: availableCount,
+                granted: granted
+            };
+        }
+
+        function renderAssessment(assessment) {
+            var circle = document.getElementById("exposureCircle");
+            var word = document.getElementById("exposureWord");
+            var badge = document.getElementById("exposureBadge");
+            var message = document.getElementById("exposureMessage");
+            var meta = document.getElementById("exposureMeta");
+
+            if (circle) {
+                circle.classList.remove("level-low", "level-medium", "level-high");
+                circle.classList.add("level-" + assessment.level);
+            }
+            if (word) word.textContent = assessment.levelWord;
+
+            if (badge) {
+                badge.classList.remove("high", "medium", "low");
+                badge.classList.add(assessment.level);
+                badge.textContent = assessment.badgeText;
+            }
+            if (message) message.textContent = assessment.message;
+
+            if (meta) {
+                meta.textContent = assessment.exposedCategories + " of " + assessment.totalCategories +
+                    " tested categories exposed at least one value · " +
+                    assessment.availableCount + " individual values returned · " +
+                    assessment.granted + " sensitive permission(s) already granted.";
+            }
+
+            renderBreakdown(assessment.breakdown, assessment);
+        }
+
+        function renderBreakdown(breakdown, assessment) {
+            var container = document.getElementById("breakdownRows");
+            if (!container) return;
+            container.innerHTML = "";
+
+            for (var i = 0; i < breakdown.length; i++) {
+                var item = breakdown[i];
+                var row = document.createElement("div");
+                row.className = "score-row";
+
+                var label = document.createElement("div");
+                label.className = "score-label";
+                label.textContent = item.label;
+
+                var detail = document.createElement("span");
+                detail.className = "score-detail";
+                detail.textContent = item.detail;
+                label.appendChild(detail);
+
+                var result = document.createElement("span");
+                result.className = "score-result";
+                if (item.state === "detected") result.classList.add("detected-score");
+                if (item.state === "partial" || item.state === "warn") result.classList.add("warn-score");
+                if (item.state === "safe" || item.state === "none") result.classList.add("safe-score");
+                result.textContent = item.points;
+
+                row.appendChild(label);
+                row.appendChild(result);
+                container.appendChild(row);
+            }
+
+            var totalRow = document.createElement("div");
+            totalRow.className = "score-row score-total-row";
+            totalRow.innerHTML =
+                '<div class="score-label"><strong>CATEGORY VISIBILITY SUMMARY</strong>' +
+                '<span class="score-detail">This is a descriptive privacy-awareness measure, not a security score. Permission-controlled resources are excluded.</span></div>' +
+                '<span class="score-result detected-score">' + assessment.exposedCategories + ' / ' + assessment.totalCategories + ' categories</span>';
+            container.appendChild(totalRow);
+        }
+
+        /* ---------- MAIN SCAN ---------- */
+
+        function runBrowserScan() {
+
+            var button = document.getElementById("scanButton");
+            var results = document.getElementById("results");
+
+            if (button) {
+                button.disabled = true;
+                button.textContent = "⏳ SCANNING...";
+            }
+
+            if (results) {
+                results.classList.remove("hidden");
+                results.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            var allRows;
+            var dntRow = null;
+
+            try {
+                allRows = collectBrowserData();
+            }
+            catch (error) {
+                allRows = [];
+            }
+
+            /* Render every detected value, even if something failed */
+
+            for (var i = 0; i < allRows.length; i++) {
+
+                var entry = allRows[i];
+                renderRows("rows" + entry.target.charAt(0).toUpperCase() +
+                    entry.target.slice(1), entry.data);
+
+                if (entry.target === "settings") {
+                    for (var s = 0; s < entry.data.length; s++) {
+                        if (entry.data[s].label === "Do Not Track") {
+                            dntRow = entry.data[s];
+                        }
+                    }
+                }
+            }
+
+            /* Permission status (read only - no prompting) */
+
+            var requests = [];
+
+            for (var p = 0; p < PERMISSIONS.length; p++) {
+                requests.push(readPermissionStatus(PERMISSIONS[p].key));
+            }
+
+            Promise.all(requests).then(function (statuses) {
+
+                renderPermissions(statuses);
+
+                var assessment = buildAssessment(allRows, statuses, dntRow);
+                renderAssessment(assessment);
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = "🔍 SCAN MY BROWSER AGAIN";
+                }
+
+            }).catch(function () {
+
+                var fallback = [];
+
+                for (var f = 0; f < PERMISSIONS.length; f++) {
+                    fallback.push({
+                        state: "unavailable",
+                        label: "Permission status unavailable"
+                    });
+                }
+
+                renderPermissions(fallback);
+
+                var assessment = buildAssessment(allRows, fallback, dntRow);
+                renderAssessment(assessment);
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = "🔍 SCAN MY BROWSER AGAIN";
+                }
+
+            });
+
+        }
+
+    </script>
+
+
+</body>
+</html>
